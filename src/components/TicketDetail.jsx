@@ -1,5 +1,20 @@
 import { X, MapPin, Pencil, Trash } from "lucide-react";
 
+const STATUS_MAP = [
+  {
+    bgColor: "bg-sky-400",
+    label: "Upcoming",
+  },
+  {
+    bgColor: "bg-green-600",
+    label: "Attended",
+  },
+  {
+    bgColor: "bg-red-500",
+    label: "bg-red-500",
+  },
+];
+
 function TicketDetail({ ticketInfo, onClose, onEdit, onDelete }) {
   return (
     <div
@@ -171,7 +186,7 @@ function TicketDetail({ ticketInfo, onClose, onEdit, onDelete }) {
                   Note
                 </dt>
 
-                <dd className="text-xs text-[#1B1B1B] xs:text-base">
+                <dd className="text-sm text-[#1B1B1B] sm:text-base">
                   Dress code: Black
                 </dd>
               </div>
@@ -194,9 +209,16 @@ function TicketDetail({ ticketInfo, onClose, onEdit, onDelete }) {
           </div>
 
           {/* Badge */}
-          <div className="flex flex-col items-center gap-2 px-4 py-3 sm:px-6 sm:py-3">
-            <span className="rounded-full bg-green-600 px-2 py-0.5 text-sm font-medium text-white">
-              Attended
+          <div className="flex items-center justify-center gap-2 px-4 py-3 sm:px-6 sm:py-3">
+            <span className="font-mono text-[12px] text-[#1B1B1B]/45">
+              Status:
+            </span>
+            <span
+              className={`rounded-full px-2 py-0.5 text-sm font-medium text-white ${
+                STATUS_MAP[ticketInfo?.status].bgColor ?? "bg-stone-400"
+              }`}
+            >
+              {STATUS_MAP[ticketInfo?.status].label ?? "Unknown"}
             </span>
           </div>
         </div>

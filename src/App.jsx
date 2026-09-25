@@ -199,7 +199,7 @@ function App() {
                   time: "16:00",
                   category: "Concert",
                   zone: "EXO-L1",
-                  status: "Attended",
+                  status: 1,
                 })
               }
             />
