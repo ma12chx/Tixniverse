@@ -1,0 +1,67 @@
+import { Ticket, LayoutGrid, CalendarDays, Plus } from "lucide-react";
+
+const VIEW = {
+  COLLECTION: "collection",
+  CALENDAR: "calendar",
+};
+
+function NavBar({ view, onViewChange, onAddTicket }) {
+  return (
+    <header className="sticky top-0 z-20" style={{ background: "var(--ink)" }}>
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <Ticket size={22} style={{ color: "var(--red)" }} />
+          <h3
+            className="text-lg sm:text-xl font-bold tracking-tight"
+            style={{ color: "var(--paper)" }}
+          >
+            Tixniverse
+          </h3>
+        </div>
+
+        <div
+          className="flex items-center gap-1 rounded-full p-1"
+          style={{ background: "rgba(244,237,224,0.12)" }}
+        >
+          <button
+            onClick={() => onViewChange(VIEW.COLLECTION)}
+            className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium"
+            style={{
+              background:
+                view === VIEW.COLLECTION ? "var(--paper)" : "transparent",
+              color: view === VIEW.COLLECTION ? "var(--ink)" : "var(--paper)",
+            }}
+          >
+            <LayoutGrid size={14} />
+            <span className="hidden sm:inline">Collection</span>
+          </button>
+          <button
+            onClick={() => onViewChange(VIEW.CALENDAR)}
+            className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium"
+            style={{
+              background:
+                view === VIEW.CALENDAR ? "var(--paper)" : "transparent",
+              color: view === VIEW.CALENDAR ? "var(--ink)" : "var(--paper)",
+            }}
+          >
+            <CalendarDays size={14} />
+            <span className="hidden sm:inline">Calendar</span>
+          </button>
+        </div>
+
+        <div className="flex items-center gap-2 flex-shrink-0">
+          <button
+            onClick={onAddTicket}
+            className="flex items-center gap-1.5 rounded-full px-3 sm:px-4 py-2 font-medium text-sm"
+            style={{ background: "var(--red)", color: "#fff" }}
+          >
+            <Plus size={16} />
+            <span className="hidden sm:inline">Add ticket</span>
+          </button>
+        </div>
+      </div>
+    </header>
+  );
+}
+
+export default NavBar;

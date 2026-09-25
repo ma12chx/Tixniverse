@@ -1,0 +1,42 @@
+@import url("https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap");
+@import "tailwindcss";
+
+html,
+body,
+#app {
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Google Sans", sans-serif;
+}
+
+.tixniverse-app {
+  --ink: #1c2541;
+  --paper: #f4ede0;
+  --red: #c0392e;
+  --gold: #b8863b;
+  --green: #3f6b4c;
+  --muted: #8b8378;
+  --line: #ddd0b5;
+
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "Google Sans", sans-serif;
+}
+.stub-input {
+  width: 100%;
+  padding: 0.55rem 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--line);
+  background: #fff;
+  font-size: 0.875rem;
+  color: var(--ink);
+  outline: none;
+}
+.stub-input:focus {
+  border-color: var(--red);
+}
