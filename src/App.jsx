@@ -1,12 +1,11 @@
 import { useState } from "react";
 
 import NavBar from "./components/NavBar.jsx";
-import SearchBox from "./components/SearchBox.jsx";
-import SearchFilter from "./components/SearchFilter.jsx";
-import EmptyCollection from "./components/EmptyCollection.jsx";
-import TicketCard from "./components/TicketCard.jsx";
 import TicketManagement from "./components/TicketManagement.jsx";
 import TicketDetail from "./components/TicketDetail.jsx";
+
+import CollectionView from "./views/Collection.jsx";
+import CalendarView from "./views/Calendar.jsx";
 
 const VIEW = {
   COLLECTION: "collection",
@@ -30,7 +29,7 @@ const EDIT_MODE = {
 };
 
 function App() {
-  const [view, setView] = useState(VIEW.COLLECTION);
+  const [selectedView, setSelectedView] = useState(VIEW.COLLECTION);
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -46,12 +45,16 @@ function App() {
   // Ticket detail popup
   const [ticketDetail, setTicketDetail] = useState(null);
 
+  // For Calendar view
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(null);
+
   // --------------------------------------------------
-  // View
+  // Collection View
   // --------------------------------------------------
 
-  function handleViewChange(selectedView) {
-    setView(selectedView);
+  function handleViewChange(view) {
+    setSelectedView(view);
 
     // Close category dropdown when switching views
     setDropdownOpen(false);
@@ -61,8 +64,8 @@ function App() {
   // Category
   // --------------------------------------------------
 
-  function handleCategoryChange(selectedCategory) {
-    setSelectedCategory(selectedCategory);
+  function handleCategoryChange(category) {
+    setSelectedCategory(category);
 
     // Filter tickets by category: TO-DO
   }
@@ -119,92 +122,33 @@ function App() {
     <div className="tixniverse-app min-h-screen w-full">
       {/* Navigation bar */}
       <NavBar
-        view={view}
+        view={selectedView}
         onViewChange={handleViewChange}
         onAddTicket={handleAddTicket}
       />
 
       {/* Collection */}
-      {view === VIEW.COLLECTION && (
-        <>
-          {/* Search + Filter */}
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-6 pb-2">
-            <div className="flex items-center gap-2 w-full">
-              {/* Search Box */}
-              <div className="flex-1 min-w-0">
-                <SearchBox />
-              </div>
+      {selectedView === VIEW.COLLECTION && (
+        <CollectionView
+          dropdownOpen={dropdownOpen}
+          onDropdownChange={setDropdownOpen}
+          categoryOptions={CATEGORY_OPTIONS}
+          selectedCategory={selectedCategory}
+          onCategoryChange={handleCategoryChange}
+          onAddTicket={handleAddTicket}
+          onOpenTicketDetails={handleOpenTicketDetails}
+        />
+      )}
 
-              {/* All / Upcoming / Past + Dropdown */}
-              <SearchFilter onDropdownChange={setDropdownOpen} />
-            </div>
-          </div>
-
-          {/* Category buttons */}
-          {dropdownOpen && (
-            <div className="max-w-6xl mx-auto px-4 sm:px-6 py-2">
-              <div
-                className="
-                  flex
-                  flex-nowrap
-                  gap-2
-                  overflow-x-auto
-                  justify-start
-                  sm:justify-center
-                  pb-2
-                  scrollbar-hide
-                "
-              >
-                {CATEGORY_OPTIONS.map((category) => (
-                  <button
-                    key={category}
-                    onClick={() => handleCategoryChange(category)}
-                    className="
-                      px-3 py-1.5
-                      text-sm font-medium
-                      rounded-lg
-                      whitespace-nowrap
-                      shrink-0
-                    "
-                    style={{
-                      background:
-                        selectedCategory === category ? "var(--ink)" : "#fff",
-                      color:
-                        selectedCategory === category
-                          ? "var(--paper)"
-                          : "var(--ink)",
-                      border: "1px solid var(--line)",
-                    }}
-                  >
-                    {category}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Content */}
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6">
-            {/* Empty collection */}
-            <EmptyCollection onAddTicket={handleAddTicket} />
-
-            {/* Ticket */}
-            <TicketCard
-              onClick={() =>
-                handleOpenTicketDetails({
-                  id: 1,
-                  eventName: "EXO PLANET #6 - EXhOrizon in BANGKOK [DAY 2]",
-                  venue: "Impact Arena",
-                  date: "2026/05/17",
-                  time: "16:00",
-                  category: "Concert",
-                  zone: "EXO-L1",
-                  status: 1,
-                })
-              }
-            />
-          </div>
-        </>
+      {/* Calendar */}
+      {selectedView === VIEW.CALENDAR && (
+        <CalendarView
+          currentDate={currentDate}
+          setCurrentDate={setCurrentDate}
+          selectedDate={selectedDate}
+          setSelectedDate={setSelectedDate}
+          onSelectEvent={handleOpenTicketDetails}
+        />
       )}
 
       {/* Add / Edit Ticket popup */}

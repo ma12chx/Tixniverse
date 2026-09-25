@@ -132,6 +132,7 @@ function TicketDetail({ ticketInfo, onClose, onEdit, onDelete }) {
                 gap-1.5
                 text-sm
                 text-[#1B1B1B]/60
+                uppercase
               "
             >
               <MapPin size={16} className="shrink-0" />
