@@ -1,6 +1,6 @@
 import { X, MapPin, Pencil, Trash } from "lucide-react";
 
-function TicketDetail({ ticketInfo, onClose }) {
+function TicketDetail({ ticketInfo, onClose, onEdit, onDelete }) {
   return (
     <div
       role="dialog"
@@ -206,6 +206,7 @@ function TicketDetail({ ticketInfo, onClose }) {
           {/* Edit */}
           <button
             type="button"
+            onClick={() => onEdit(ticketInfo)}
             className="
             flex flex-1
             items-center
@@ -233,6 +234,7 @@ function TicketDetail({ ticketInfo, onClose }) {
           {/* Delete */}
           <button
             type="button"
+            onClick={() => onDelete(ticketInfo)}
             className="
             flex flex-1
             items-center

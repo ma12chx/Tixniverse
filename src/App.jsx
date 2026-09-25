@@ -50,54 +50,70 @@ function App() {
   // View
   // --------------------------------------------------
 
-  const handleViewChange = (newView) => {
-    setView(newView);
+  function handleViewChange(selectedView) {
+    setView(selectedView);
 
     // Close category dropdown when switching views
     setDropdownOpen(false);
-  };
+  }
 
   // --------------------------------------------------
   // Category
   // --------------------------------------------------
 
-  const handleCategoryChange = (category) => {
-    setSelectedCategory(category);
+  function handleCategoryChange(selectedCategory) {
+    setSelectedCategory(selectedCategory);
 
     // Filter tickets by category: TO-DO
-  };
+  }
 
   // --------------------------------------------------
   // Add / Edit ticket
   // --------------------------------------------------
 
-  const handleAddTicket = () => {
+  function handleAddTicket() {
     setTicketPopup({
       isOpen: true,
       mode: EDIT_MODE.ADD,
       ticket: null,
     });
-  };
+  }
 
-  const handleCloseTicket = () => {
+  function handleEditTicket(ticket) {
+    // Close ticket detail
+    setTicketDetail(null);
+
+    setTicketPopup({
+      isOpen: true,
+      mode: EDIT_MODE.EDIT,
+      ticket: ticket,
+    });
+  }
+
+  function handleDeleteTicket(ticket) {
+    setTicketDetail(ticket);
+    console.log("Delete ticketId: ", ticket.id);
+  }
+
+  function handleCloseTicketManagement() {
     setTicketPopup({
       isOpen: false,
       mode: EDIT_MODE.ADD,
       ticket: null,
     });
-  };
+  }
 
   // --------------------------------------------------
   // Ticket details
   // --------------------------------------------------
 
-  const handleOpenTicketDetails = (ticket) => {
+  function handleOpenTicketDetails(ticket) {
     setTicketDetail(ticket);
-  };
+  }
 
-  const handleCloseTicketDetails = () => {
+  function handleCloseTicketDetails() {
     setTicketDetail(null);
-  };
+  }
 
   return (
     <div className="tixniverse-app min-h-screen w-full">
@@ -197,7 +213,7 @@ function App() {
           mode={ticketPopup.mode}
           ticket={ticketPopup.ticket}
           eventType={CATEGORY_OPTIONS}
-          onClose={handleCloseTicket}
+          onClose={handleCloseTicketManagement}
         />
       )}
 
@@ -205,6 +221,8 @@ function App() {
       {ticketDetail && (
         <TicketDetail
           ticketInfo={ticketDetail}
+          onEdit={handleEditTicket}
+          onDelete={handleDeleteTicket}
           onClose={handleCloseTicketDetails}
         />
       )}

@@ -40,3 +40,7 @@ body {
 .stub-input:focus {
   border-color: var(--red);
 }
+
+button:not(:disabled) {
+  cursor: pointer;
+}
