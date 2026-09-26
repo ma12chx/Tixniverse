@@ -29,22 +29,21 @@ function Collection({
       {dropdownOpen && (
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-2">
           <div className="flex flex-nowrap gap-2 overflow-x-auto justify-start sm:justify-center pb-2 scrollbar-hide">
-            {categoryOptions.map((category) => (
+            {categoryOptions.map(({ value, Icon }) => (
               <button
-                key={category}
-                onClick={() => onCategoryChange(category)}
-                className="px-3 py-1.5 text-sm font-medium rounded-lg whitespace-nowrap shrink-0 cursor-pointer"
+                key={value}
+                onClick={() => onCategoryChange(value)}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-lg whitespace-nowrap shrink-0 cursor-pointer"
                 style={{
                   background:
-                    selectedCategory === category ? "var(--ink)" : "#fff",
+                    selectedCategory === value ? "var(--ink)" : "#fff",
                   color:
-                    selectedCategory === category
-                      ? "var(--paper)"
-                      : "var(--ink)",
+                    selectedCategory === value ? "var(--paper)" : "var(--ink)",
                   border: "1px solid var(--line)",
                 }}
               >
-                {category}
+                <Icon size={14} />
+                {value}
               </button>
             ))}
           </div>

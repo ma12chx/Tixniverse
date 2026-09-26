@@ -1,4 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&display=swap");
 @import "tailwindcss";
 
 html,
@@ -16,17 +17,23 @@ body {
 
 .tixniverse-app {
   --ink: #1c2541;
-  --paper: #f4ede0;
+  --paper: #eeeeee;
   --red: #c0392e;
   --gold: #b8863b;
-  --green: #3f6b4c;
-  --muted: #8b8378;
-  --line: #ddd0b5;
+  --purple: #4361d3;
+  --green: #53d388;
+  --muted: #8a8a8a;
+  --line: #cfcfcf;
 
   background: var(--paper);
   color: var(--ink);
   font-family: "Google Sans", sans-serif;
 }
+
+.font-pixel {
+  font-family: "Silkscreen", sans-serif;
+}
+
 .stub-input {
   width: 100%;
   padding: 0.55rem 0.75rem;
@@ -38,7 +45,7 @@ body {
   outline: none;
 }
 .stub-input:focus {
-  border-color: var(--red);
+  border-color: var(--purple);
 }
 
 button:not(:disabled) {

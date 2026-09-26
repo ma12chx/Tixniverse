@@ -1,4 +1,4 @@
-import { Ticket, LayoutGrid, CalendarDays, Plus } from "lucide-react";
+import { Galaxy, LayoutGrid, CalendarDays, Plus } from "lucide-react";
 
 const VIEW = {
   COLLECTION: "collection",
@@ -10,9 +10,9 @@ function NavBar({ view, onViewChange, onAddTicket }) {
     <header className="sticky top-0 z-20" style={{ background: "var(--ink)" }}>
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between gap-3">
         <div className="flex items-center gap-2">
-          <Ticket size={22} style={{ color: "var(--red)" }} />
+          <Galaxy size={24} style={{ color: "var(--green)" }} />
           <h3
-            className="text-lg sm:text-xl font-bold tracking-tight"
+            className="text-lg sm:text-xl font-pixel"
             style={{ color: "var(--paper)" }}
           >
             Tixniverse
@@ -52,8 +52,7 @@ function NavBar({ view, onViewChange, onAddTicket }) {
         <div className="flex items-center gap-2 flex-shrink-0">
           <button
             onClick={onAddTicket}
-            className="flex items-center gap-1.5 rounded-full px-3 sm:px-4 py-2 font-medium text-sm"
-            style={{ background: "var(--red)", color: "#fff" }}
+            className="flex items-center gap-1.5 rounded-full px-3 sm:px-4 py-2 font-medium bg-[var(--purple)] hover:bg-indigo-600 text-sm text-white"
           >
             <Plus size={16} />
             <span className="hidden sm:inline">Add ticket</span>

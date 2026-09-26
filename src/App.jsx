@@ -1,5 +1,16 @@
 import { useState } from "react";
 
+import {
+  LayoutGrid,
+  MicVocal,
+  Users,
+  Tv,
+  TvMinimalPlay,
+  PartyPopper,
+  Ticket,
+  Icon,
+} from "lucide-react";
+
 import NavBar from "./components/NavBar.jsx";
 import TicketManagement from "./components/TicketManagement.jsx";
 import TicketDetail from "./components/TicketDetail.jsx";
@@ -12,16 +23,16 @@ const VIEW = {
   CALENDAR: "calendar",
 };
 
-const CATEGORY_OPTIONS = [
-  "All",
-  "Concert",
-  "Fan Meeting",
-  "Live",
-  "Online Streaming",
-  "Festival",
-  "Sports",
-  "Other",
+const EVENT_TYPES = [
+  { value: "Concert", Icon: MicVocal },
+  { value: "Fan Meeting", Icon: Users },
+  { value: "Live", Icon: Tv },
+  { value: "Online Streaming", Icon: TvMinimalPlay },
+  { value: "Festival", Icon: PartyPopper },
+  { value: "Other", Icon: Ticket },
 ];
+
+const CATEGORY_OPTIONS = [{ value: "All", Icon: LayoutGrid }, ...EVENT_TYPES];
 
 const EDIT_MODE = {
   ADD: 0,
@@ -33,7 +44,9 @@ function App() {
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  const [selectedCategory, setSelectedCategory] = useState(CATEGORY_OPTIONS[0]);
+  const [selectedCategory, setSelectedCategory] = useState(
+    CATEGORY_OPTIONS[0].value,
+  );
 
   // Add / Edit ticket popup
   const [ticketPopup, setTicketPopup] = useState({

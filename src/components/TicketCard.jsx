@@ -148,7 +148,7 @@ function TicketCard({ onClick }) {
         </span>
 
         <div className="flex items-center gap-3 lg:flex-col lg:gap-2">
-          <span className="font-display text-lg font-bold tracking-wide text-rose-700">
+          <span className="font-display text-lg font-bold tracking-wide text-[var(--ink)]">
             EXO-L1
           </span>
 

@@ -9,8 +9,7 @@ function EmptyCollection({ onAddTicket }) {
         Add the first show, fan meet, or event you want to remember.
       </p>
       <button
-        className="mt-5 flex items-center gap-1.5 rounded-full px-4 py-2 font-medium text-sm"
-        style={{ background: "var(--red)", color: "#fff" }}
+        className="mt-5 flex items-center gap-1.5 rounded-full px-4 py-2 font-medium text-sm bg-[var(--purple)] hover:bg-indigo-600 text-white cursor-pointer transition-colors"
         onClick={onAddTicket}
       >
         <Plus size={16} /> Add your first ticket

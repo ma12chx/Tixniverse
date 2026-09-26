@@ -147,7 +147,7 @@ function Calendar({
               style={{
                 background: isSelected ? "var(--ink)" : "#fff",
                 border: isToday
-                  ? "1.5px solid var(--red)"
+                  ? "1.5px solid var(--purple)"
                   : "1px solid var(--line)",
                 color: isSelected ? "var(--paper)" : "var(--ink)",
               }}

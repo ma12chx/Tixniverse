@@ -199,12 +199,12 @@ function TicketDetail({ ticketInfo, onClose, onEdit, onDelete }) {
             <div className="border-t-2 border-dashed border-[#1B1B1B]/15" />
 
             <span
-              style={{ backgroundColor: "#111827" }}
+              style={{ backgroundColor: "#474747" }}
               className="absolute -left-3 -top-3 h-6 w-6 rounded-full"
             />
 
             <span
-              style={{ backgroundColor: "#111827" }}
+              style={{ backgroundColor: "#474747" }}
               className="absolute -right-3 -top-3 h-6 w-6 rounded-full"
             />
           </div>

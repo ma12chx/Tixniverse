@@ -122,8 +122,8 @@ function TicketManagement({ mode, ticket, eventType, onClose }) {
             <Field label="Event type">
               <select className="stub-input">
                 {eventType.map((type) => (
-                  <option key={type} value={type}>
-                    {type}
+                  <option key={type.value} value={type.value}>
+                    {type.value}
                   </option>
                 ))}
               </select>
@@ -179,7 +179,7 @@ function TicketManagement({ mode, ticket, eventType, onClose }) {
               disabled={isSaving}
               className="flex-1 rounded-lg py-2.5 font-semibold text-sm"
               style={{
-                background: "var(--red)",
+                background: "var(--purple)",
                 color: "#fff",
                 opacity: isSaving ? 0.6 : 1,
               }}
