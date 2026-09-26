@@ -1,7 +1,18 @@
 import { useState } from "react";
 
 import { X, Upload } from "lucide-react";
+import Swal from "sweetalert2";
+
 import Field from "./Field";
+
+function testSwal() {
+  Swal.fire({
+    title: "Test!",
+    text: "Hello, Swal",
+    icon: "info",
+    confirmButtonText: "OK",
+  });
+}
 
 function TicketManagement({ mode, ticket, eventType, onClose }) {
   const isEdit = mode === 1;
@@ -16,7 +27,6 @@ function TicketManagement({ mode, ticket, eventType, onClose }) {
     <div
       className="fixed inset-0 z-40 flex items-end sm:items-center justify-center"
       style={{ background: "rgba(28,37,65,0.55)" }}
-      onClick={onClose}
     >
       <div
         className="w-full sm:max-w-lg rounded-t-2xl sm:rounded-2xl overflow-y-auto"
@@ -175,7 +185,8 @@ function TicketManagement({ mode, ticket, eventType, onClose }) {
           </Field>
           <div className="flex gap-2 pt-2 pb-1">
             <button
-              type="submit"
+              type="button"
+              onClick={testSwal}
               disabled={isSaving}
               className="flex-1 rounded-lg py-2.5 font-semibold text-sm"
               style={{

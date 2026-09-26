@@ -22,7 +22,6 @@ function TicketDetail({ ticketInfo, onClose, onEdit, onDelete }) {
       aria-modal="true"
       aria-label={`${ticketInfo?.eventName} ticket details`}
       className="fixed inset-0 z-50 flex items-center justify-center overflow-x-hidden bg-black/70 p-3 sm:p-4 backdrop-blur-sm"
-      onClick={onClose}
     >
       <div
         onClick={(e) => e.stopPropagation()}
