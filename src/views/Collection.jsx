@@ -4,13 +4,19 @@ import EmptyCollection from "../components/EmptyCollection.jsx";
 import TicketCard from "../components/TicketCard.jsx";
 
 function Collection({
+  tickets,
+  IsTicketsLoaded,
   dropdownOpen,
   onDropdownChange,
   categoryOptions,
-  selectedCategory,
+  selectedCategoryId,
   onCategoryChange,
   onAddTicket,
   onOpenTicketDetails,
+  filterStatus,
+  onFilterChange,
+  upcomingCount,
+  pastCount,
 }) {
   return (
     <>
@@ -21,7 +27,14 @@ function Collection({
             <SearchBox />
           </div>
 
-          <SearchFilter onDropdownChange={onDropdownChange} />
+          <SearchFilter
+            filterStatus={filterStatus}
+            onFilterChange={onFilterChange}
+            upcomingCount={upcomingCount}
+            pastCount={pastCount}
+            dropdownOpen={dropdownOpen}
+            onDropdownChange={onDropdownChange}
+          />
         </div>
       </div>
 
@@ -29,16 +42,15 @@ function Collection({
       {dropdownOpen && (
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-2">
           <div className="flex flex-nowrap gap-2 overflow-x-auto justify-start sm:justify-center pb-2 scrollbar-hide">
-            {categoryOptions.map(({ value, Icon }) => (
+            {categoryOptions.map(({ id, value, Icon }) => (
               <button
-                key={value}
-                onClick={() => onCategoryChange(value)}
+                key={id}
+                onClick={() => onCategoryChange(id)}
                 className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-lg whitespace-nowrap shrink-0 cursor-pointer"
                 style={{
-                  background:
-                    selectedCategory === value ? "var(--ink)" : "#fff",
+                  background: selectedCategoryId === id ? "var(--ink)" : "#fff",
                   color:
-                    selectedCategory === value ? "var(--paper)" : "var(--ink)",
+                    selectedCategoryId === id ? "var(--paper)" : "var(--ink)",
                   border: "1px solid var(--line)",
                 }}
               >
@@ -50,23 +62,28 @@ function Collection({
         </div>
       )}
 
+      {/* Content */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6">
-        <EmptyCollection onAddTicket={onAddTicket} />
-
-        <TicketCard
-          onClick={() =>
-            onOpenTicketDetails({
-              id: 1,
-              eventName: "EXO PLANET #6 - EXhOrizon in BANGKOK [DAY 2]",
-              venue: "Impact Arena",
-              date: "2026/05/17",
-              time: "16:00",
-              category: "Concert",
-              zone: "EXO-L1",
-              status: 1,
-            })
-          }
-        />
+        {!IsTicketsLoaded ? (
+          <p
+            className="text-sm text-center py-20"
+            style={{ color: "var(--muted)" }}
+          >
+            Loading your collection…
+          </p>
+        ) : tickets.length === 0 ? (
+          <EmptyCollection onAddTicket={onAddTicket} />
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+            {tickets.map((ticket) => (
+              <TicketCard
+                key={ticket.id}
+                ticket={ticket}
+                onClick={() => onOpenTicketDetails(ticket)}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </>
   );

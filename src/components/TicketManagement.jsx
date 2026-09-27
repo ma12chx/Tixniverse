@@ -109,8 +109,8 @@ function TicketManagement({ mode, ticket, eventType, onClose }) {
               <input className="stub-input" />
             </Field>
 
-            {/* Seat no. */}
-            <Field label="Seat no.">
+            {/* Seat */}
+            <Field label="Seat">
               <input className="stub-input" />
             </Field>
           </div>

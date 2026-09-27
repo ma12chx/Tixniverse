@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 import { ChevronDown, ChevronUp } from "lucide-react";
 
 const FILTER_OPTIONS = {
@@ -8,31 +6,25 @@ const FILTER_OPTIONS = {
   PAST: 2,
 };
 
-function SearchFilter({ onDropdownChange }) {
-  const [filterStatus, setFilterStatus] = useState(FILTER_OPTIONS.ALL);
-
-  const [upcomingCount, setUpcomingCount] = useState(0);
-  const [pastCount, setPastCount] = useState(0);
-
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-
-  const handleFilterChange = () => {
+function SearchFilter({
+  filterStatus,
+  onFilterChange,
+  upcomingCount,
+  pastCount,
+  dropdownOpen,
+  onDropdownChange,
+}) {
+  function handleFilterChange() {
     if (filterStatus === FILTER_OPTIONS.ALL) {
-      setFilterStatus(FILTER_OPTIONS.UPCOMING);
-
-      // Show upcoming tickets: TO-DO
+      onFilterChange(FILTER_OPTIONS.UPCOMING);
     } else if (filterStatus === FILTER_OPTIONS.UPCOMING) {
-      setFilterStatus(FILTER_OPTIONS.PAST);
-
-      // Show past tickets: TO-DO
+      onFilterChange(FILTER_OPTIONS.PAST);
     } else {
-      setFilterStatus(FILTER_OPTIONS.ALL);
-
-      // Show all tickets: TO-DO
+      onFilterChange(FILTER_OPTIONS.ALL);
     }
-  };
+  }
 
-  const getFilterButtonTitle = () => {
+  function getFilterButtonTitle() {
     if (filterStatus === FILTER_OPTIONS.ALL) {
       return "All";
     } else if (filterStatus === FILTER_OPTIONS.UPCOMING) {
@@ -40,14 +32,7 @@ function SearchFilter({ onDropdownChange }) {
     } else {
       return `Past (${pastCount})`;
     }
-  };
-
-  const handleDropdownChange = () => {
-    const newState = !dropdownOpen;
-
-    setDropdownOpen(newState);
-    onDropdownChange(newState);
-  };
+  }
 
   return (
     <div className="flex items-center gap-2 flex-wrap">
@@ -74,7 +59,7 @@ function SearchFilter({ onDropdownChange }) {
         style={{ border: "1px solid var(--line)" }}
       >
         <button
-          onClick={handleDropdownChange}
+          onClick={() => onDropdownChange(!dropdownOpen)}
           className="px-3 py-2 text-sm font-medium"
           style={{
             background: "#fff",

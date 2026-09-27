@@ -15,7 +15,7 @@ function NavBar({ view, onViewChange, onAddTicket }) {
             className="text-lg sm:text-xl font-pixel"
             style={{ color: "var(--paper)" }}
           >
-            Tixniverse
+            Ti<span style={{ color: "var(--green)" }}>x</span>niverse
           </h3>
         </div>
 
