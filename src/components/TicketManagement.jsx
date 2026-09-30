@@ -1,27 +1,114 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import { X, Upload } from "lucide-react";
 import Swal from "sweetalert2";
 
 import Field from "./Field";
 
-function testSwal() {
-  Swal.fire({
-    title: "Test!",
-    text: "Hello, Swal",
-    icon: "info",
-    confirmButtonText: "OK",
-  });
+import { supabase } from "../lib/supabaseClient.js";
+
+function buildInitialForm(ticket) {
+  return {
+    id: ticket?.id ?? null,
+    eventName: ticket?.eventName ?? "",
+    artist: ticket?.artist ?? "",
+    eventTypeId: ticket?.eventTypeId ?? 1, // Default: Concert
+    eventDate: ticket?.eventDate ?? "",
+    eventTime: ticket?.eventTime ?? "",
+    hasAttended: ticket?.hasAttended ?? false,
+    venue: ticket?.venue ?? "",
+    hall: ticket?.hall ?? "",
+    zone: ticket?.zone ?? "",
+    seat: ticket?.seat ?? "",
+    notes: ticket?.notes ?? "",
+    cover: ticket?.cover ?? "",
+    coverFile: null,
+  };
 }
 
-function TicketManagement({ mode, ticket, eventType, onClose }) {
+async function uploadCover(file) {
+  const extension = file.name.split(".").pop();
+  const path = `${Date.now()} - ${Math.random().toString(36).slice(2, 8)}.${extension}`;
+  const { error } = await supabase.storage.from("covers").upload(path, file, {
+    contentType: file.type,
+  });
+
+  if (error) throw error;
+
+  const { data } = supabase.storage.from("covers").getPublicUrl(path);
+
+  return data.publicUrl;
+}
+
+function TicketManagement({ mode, ticket, eventType, onClose, onSave }) {
   const isEdit = mode === 1;
 
   const title = isEdit ? "Edit ticket" : "Add ticket";
   const buttonTitle = isEdit ? "Save changes" : "Add to collection";
 
-  const [isAttended, setIsAttended] = useState(ticket?.attended ?? false);
+  const [formData, setFormData] = useState(() => buildInitialForm(ticket));
   const [isSaving, setIsSaving] = useState(false);
+  const fileInputRef = useRef(null);
+
+  function set(field, value) {
+    setFormData((form) => ({ ...form, [field]: value }));
+  }
+
+  function handleCoverPick(file) {
+    const previewUrl = URL.createObjectURL(file);
+    setFormData((form) => ({ ...form, cover: previewUrl, coverFile: file }));
+  }
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+
+    // Form has error
+    if (!formData.eventName || !formData.eventDate) {
+      Swal.fire({
+        title: "Missing info",
+        text: "Event title and date are required.",
+        icon: "warning",
+        confirmButtonText: "OK",
+      });
+
+      return;
+    }
+
+    setIsSaving(true);
+
+    try {
+      let coverUrl = formData.cover;
+      if (formData.coverFile) {
+        coverUrl = await uploadCover(formData.coverFile);
+      }
+
+      await onSave({
+        id: formData.id,
+        eventName: formData.eventName,
+        artist: formData.artist,
+        eventDate: formData.eventDate,
+        eventTime: formData.eventTime,
+        eventTypeId: Number(formData.eventTypeId),
+        hasAttended: formData.hasAttended,
+        venue: formData.venue,
+        hall: formData.hall,
+        zone: formData.zone,
+        seat: formData.seat,
+        notes: formData.notes,
+        cover: coverUrl,
+      });
+    } catch (error) {
+      console.error(error);
+      Swal.fire({
+        title: "Error!",
+        text: "Failed to save ticket information, please try again.",
+        icon: "error",
+        confirmButtonText: "OK",
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  }
 
   return (
     <div
@@ -46,7 +133,7 @@ function TicketManagement({ mode, ticket, eventType, onClose }) {
           </button>
         </div>
         {/* TODO - onSubmit() */}
-        <form className="px-5 py-5 flex flex-col gap-4">
+        <form onSubmit={handleSubmit} className="px-5 py-5 flex flex-col gap-4">
           <div>
             <label
               className="text-xs font-semibold uppercase tracking-wide block mb-1.5"
@@ -62,12 +149,29 @@ function TicketManagement({ mode, ticket, eventType, onClose }) {
                   border: "1px solid var(--line)",
                 }}
               >
-                <Upload size={18} style={{ color: "var(--muted)" }} />
+                {formData.cover ? (
+                  <img
+                    src={formData.cover}
+                    alt=""
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <Upload size={18} style={{ color: "var(--muted)" }} />
+                )}
               </div>
-              <input type="file" accept="image/*" className="hidden" />
+              <input
+                type="file"
+                accept="image/*"
+                ref={fileInputRef}
+                className="hidden"
+                onChange={(e) =>
+                  e.target.files[0] && handleCoverPick(e.target.files[0])
+                }
+              />
               <button
                 type="button"
-                className="text-sm font-medium rounded-lg px-3 py-2"
+                onClick={() => fileInputRef.current?.click()}
+                className="text-sm font-medium rounded-lg px-3 py-2 cursor-pointer"
                 style={{
                   border: "1px solid var(--line)",
                   background: "#fff",
@@ -75,12 +179,33 @@ function TicketManagement({ mode, ticket, eventType, onClose }) {
               >
                 Choose image
               </button>
+
+              {/* Cover exists, display "Remove" button */}
+              {formData.cover && (
+                <button
+                  type="button"
+                  onClick={() =>
+                    setFormData((form) => ({
+                      ...form,
+                      cover: "",
+                      coverFile: null,
+                    }))
+                  }
+                  className="text-sm font-medium cursor-pointer"
+                  style={{ color: "var(--red)" }}
+                >
+                  Remove
+                </button>
+              )}
             </div>
           </div>
+
           {/* Event title */}
           <Field label="Event title" required>
             <input
               required
+              value={formData.eventName}
+              onChange={(event) => set("eventName", event.target.value)}
               className="stub-input"
               placeholder="Ex. Dreamcatcher World Tour"
             />
@@ -88,51 +213,87 @@ function TicketManagement({ mode, ticket, eventType, onClose }) {
 
           {/* Artist */}
           <Field label="Artist">
-            <input className="stub-input" placeholder="Ex. Dreamcatcher" />
+            <input
+              value={formData.artist}
+              onChange={(event) => set("artist", event.target.value)}
+              className="stub-input"
+              placeholder="Ex. Dreamcatcher"
+            />
           </Field>
 
           <div className="grid grid-cols-2 gap-3">
             {/* Venue */}
             <Field label="Venue">
-              <input className="stub-input" />
+              <input
+                value={formData.venue}
+                onChange={(event) => set("venue", event.target.value)}
+                className="stub-input"
+              />
             </Field>
 
             {/* Hall */}
             <Field label="Hall">
-              <input className="stub-input" />
+              <input
+                value={formData.hall}
+                onChange={(event) => set("hall", event.target.value)}
+                className="stub-input"
+              />
             </Field>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             {/* Zone */}
             <Field label="Zone">
-              <input className="stub-input" />
+              <input
+                value={formData.zone}
+                onChange={(event) => set("zone", event.target.value)}
+                className="stub-input"
+              />
             </Field>
 
             {/* Seat */}
             <Field label="Seat">
-              <input className="stub-input" />
+              <input
+                value={formData.seat}
+                onChange={(event) => set("seat", event.target.value)}
+                className="stub-input"
+              />
             </Field>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             {/* Date */}
             <Field label="Date" required>
-              <input required type="date" className="stub-input font-mono" />
+              <input
+                required
+                value={formData.eventDate}
+                onChange={(event) => set("eventDate", event.target.value)}
+                type="date"
+                className="stub-input font-mono"
+              />
             </Field>
 
             {/* Time */}
             <Field label="Time">
-              <input type="time" className="stub-input font-mono" />
+              <input
+                type="time"
+                value={formData.eventTime}
+                onChange={(event) => set("eventTime", event.target.value)}
+                className="stub-input font-mono"
+              />
             </Field>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             {/* Event type */}
             <Field label="Event type">
-              <select className="stub-input">
+              <select
+                value={formData.eventTypeId}
+                onChange={(event) => set("eventTypeId", event.target.value)}
+                className="stub-input"
+              >
                 {eventType.map((type) => (
-                  <option key={type.value} value={type.value}>
+                  <option key={type.id} value={type.id}>
                     {type.value}
                   </option>
                 ))}
@@ -144,8 +305,8 @@ function TicketManagement({ mode, ticket, eventType, onClose }) {
               <button
                 type="button"
                 role="switch"
-                aria-checked={isAttended}
-                onClick={() => setIsAttended((a) => !a)}
+                aria-checked={formData.hasAttended}
+                onClick={() => set("hasAttended", !formData.hasAttended)}
                 className="relative inline-flex items-center h-9 w-full rounded-lg px-3"
                 style={{
                   background: "#fff",
@@ -155,13 +316,15 @@ function TicketManagement({ mode, ticket, eventType, onClose }) {
                 <span
                   className="relative inline-flex items-center h-6 w-11 rounded-full transition-colors flex-shrink-0"
                   style={{
-                    background: isAttended ? "var(--green)" : "var(--line)",
+                    background: formData.hasAttended
+                      ? "var(--green)"
+                      : "var(--line)",
                   }}
                 >
                   <span
                     className="inline-block h-5 w-5 rounded-full bg-white transition-transform"
                     style={{
-                      transform: isAttended
+                      transform: formData.hasAttended
                         ? "translateX(22px)"
                         : "translateX(2px)",
                     }}
@@ -171,31 +334,37 @@ function TicketManagement({ mode, ticket, eventType, onClose }) {
                   className="ml-2 text-sm font-medium"
                   style={{ color: "var(--ink)" }}
                 >
-                  {isAttended ? "Yes" : "No"}
+                  {formData.hasAttended ? "Yes" : "No"}
                 </span>
               </button>
             </Field>
           </div>
+
+          {/* Notes */}
           <Field label="Notes">
             <textarea
               rows={3}
+              value={formData.notes}
+              onChange={(event) => set("notes", event.target.value)}
               className="stub-input"
               placeholder="Dress code, memories..."
             />
           </Field>
+
+          {/* Button group */}
           <div className="flex gap-2 pt-2 pb-1">
+            {/* Submit button */}
             <button
-              type="button"
-              onClick={testSwal}
+              type="submit"
               disabled={isSaving}
-              className="flex-1 rounded-lg py-2.5 font-semibold text-sm"
+              className="flex-1 rounded-lg py-2.5 font-semibold text-sm cursor-pointer"
               style={{
                 background: "var(--purple)",
                 color: "#fff",
                 opacity: isSaving ? 0.6 : 1,
               }}
             >
-              {buttonTitle}
+              {isSaving ? "Saving..." : buttonTitle}
             </button>
           </div>
         </form>

@@ -75,7 +75,7 @@ function rowToTicket(row) {
     artist: row.artist,
     eventTypeId: row.event_type,
     eventDate: row.event_date,
-    event_time: row.event_time ? row.event_time.slice(0, 5) : "",
+    eventTime: row.event_time ? row.event_time.slice(0, 5) : "",
     hasAttended: row.has_attended,
     status: getEventStatusLabel(row.event_date, row.has_attended),
     venue: row.venue,
@@ -92,8 +92,8 @@ function ticketToRow(ticket) {
     event_name: ticket.eventName,
     artist: ticket.artist || null,
     event_type: ticket.eventTypeId,
-    event_date: ticket.date,
-    event_time: ticket.time || null,
+    event_date: ticket.eventDate,
+    event_time: ticket.eventTime || null,
     has_attended: ticket.hasAttended ?? false,
     venue: ticket.venue || null,
     hall: ticket.hall || null,
@@ -152,7 +152,7 @@ function App() {
     // Filter: Past
     if (filterStatus === FILTER_TYPES[2].value) {
       return categoryFilteredList.filter(
-        (ticket) => ticket.status !== FILTER_TYPES[2].label,
+        (ticket) => ticket.status !== FILTER_TYPES[1].label,
       );
     }
 
@@ -172,6 +172,17 @@ function App() {
   // For Calendar view
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(null);
+
+  // --------------------------------------------------
+  // Collection View
+  // --------------------------------------------------
+
+  function handleViewChange(view) {
+    setSelectedView(view);
+
+    // Close category dropdown when switching views
+    setDropdownOpen(false);
+  }
 
   async function loadTickets() {
     setIsTicketLoaded(false);
@@ -231,18 +242,7 @@ function App() {
   }, []);
 
   // --------------------------------------------------
-  // Collection View
-  // --------------------------------------------------
-
-  function handleViewChange(view) {
-    setSelectedView(view);
-
-    // Close category dropdown when switching views
-    setDropdownOpen(false);
-  }
-
-  // --------------------------------------------------
-  // Category
+  // Category filter
   // --------------------------------------------------
 
   function handleCategoryChange(categoryId) {
@@ -275,6 +275,63 @@ function App() {
   function handleDeleteTicket(ticket) {
     setTicketDetail(ticket);
     console.log("Delete ticketId: ", ticket.id);
+  }
+
+  async function handleSaveTicket(ticket) {
+    const rowData = ticketToRow(ticket);
+
+    // Get currently logged -in Supabase user
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+
+    if (userError || !user) {
+      Swal.fire({
+        title: "Error!",
+        text: "You must be logged in to save a ticket.",
+        icon: "error",
+        confirmButtonText: "OK",
+      });
+      return;
+    }
+
+    if (ticketPopup.mode === EDIT_MODE.ADD) {
+      const { error } = await supabase.from("ticket").insert({
+        ...rowData,
+        user_id: user.id,
+      });
+
+      if (error) {
+        Swal.fire({
+          title: "Error!",
+          text: "Failed to add ticket information.",
+          icon: "error",
+          confirmButtonText: "OK",
+        });
+
+        return;
+      } else {
+        const { error } = await supabase
+          .from("ticket")
+          .update(rowData)
+          .eq("id", ticket.id);
+
+        if (error) {
+          Swal.fire({
+            title: "Error!",
+            text: "Failed to update ticket information.",
+            icon: "error",
+            confirmButtonText: "OK",
+          });
+
+          return;
+        }
+      }
+
+      await loadTickets();
+      handleCloseTicketManagement();
+    }
   }
 
   function handleCloseTicketManagement() {
@@ -344,6 +401,7 @@ function App() {
           ticket={ticketPopup.ticket}
           eventType={EVENT_TYPES}
           onClose={handleCloseTicketManagement}
+          onSave={handleSaveTicket}
         />
       )}
 
