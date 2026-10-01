@@ -1,6 +1,12 @@
 import { MapPin, Music2 } from "lucide-react";
 
-function TicketCard({ onClick }) {
+const STATUS_COLORS = {
+  upcoming: "bg-sky-400",
+  attended: "bg-green-600",
+  missed: "bg-red-500",
+};
+
+function TicketCard({ eventTypes, ticket, onClick }) {
   return (
     <button
       style={{ backgroundColor: "#fff" }}
@@ -14,8 +20,9 @@ function TicketCard({ onClick }) {
       {/* Main ticket */}
       <div className="flex flex-1 gap-4 p-5 lg:gap-5 lg:p-6">
         {/* Ticket image */}
-        {/* <div
-          className="
+        {!ticket.cover ? (
+          <div
+            className="
             flex h-20 w-20 shrink-0
             items-center justify-center
             rounded-xl
@@ -23,14 +30,16 @@ function TicketCard({ onClick }) {
             text-xl text-white/90
             lg:h-24 lg:w-24
           "
-          aria-hidden="true"
-        >
-          <Music2 size={24} className="shrink-0" />
-        </div> */}
-        <img
-          src="https://atkmedia.allticket.com/images/up/26909/EXO_03052026_Info_SoldOut.jpg"
-          className="h-20 w-20 shrink-0 rounded-xl lg:h-24 lg:w-24"
-        />
+            aria-hidden="true"
+          >
+            <Music2 size={24} className="shrink-0" />
+          </div>
+        ) : (
+          <img
+            src={ticket.cover}
+            className="h-20 w-20 shrink-0 rounded-xl lg:h-24 lg:w-24"
+          />
+        )}
 
         {/* Ticket information */}
         <div className="min-w-0 flex-1">
@@ -44,7 +53,7 @@ function TicketCard({ onClick }) {
                 lg:text-2xl
               "
             >
-              EXO PLANET #6 - EXhOrizon in BANGKOK [DAY 2]
+              {ticket.eventName}
             </h3>
 
             <span
@@ -59,7 +68,7 @@ function TicketCard({ onClick }) {
                 text-[#1B1B1B]/60
               "
             >
-              Concert
+              {eventTypes.find((type) => type.id === ticket.eventTypeId).value}
             </span>
           </div>
 
@@ -67,7 +76,7 @@ function TicketCard({ onClick }) {
           <p className="mt-1 flex items-center gap-1.5 truncate text-sm text-[#1B1B1B]/60">
             <MapPin size={16} className="shrink-0" />
             <span className="text-[#1B1B1B] truncate uppercase">
-              Impact Arena
+              {ticket.venue}
             </span>
           </p>
 
@@ -75,25 +84,25 @@ function TicketCard({ onClick }) {
             {/* Date */}
             <div>
               <dt className="font-mono text-[12px] text-[#1B1B1B]/45">Date</dt>
-              <dd className="text-sm text-[#1B1B1B]">2026/05/17</dd>
+              <dd className="text-sm text-[#1B1B1B]">{ticket.eventDate}</dd>
             </div>
 
             {/* Time */}
             <div>
               <dt className="font-mono text-[12px] text-[#1B1B1B]/45">Time</dt>
-              <dd className="text-sm text-[#1B1B1B]">16:00</dd>
+              <dd className="text-sm text-[#1B1B1B]">{ticket.eventTime}</dd>
             </div>
 
             {/* Zone */}
             <div>
               <dt className="font-mono text-[12px] text-[#1B1B1B]/45">Zone</dt>
-              <dd className="text-sm text-[#1B1B1B]">EXO-L1</dd>
+              <dd className="text-sm text-[#1B1B1B]">{ticket.zone}</dd>
             </div>
 
             {/* Seat */}
             <div>
               <dt className="font-mono text-[12px] text-[#1B1B1B]/45">Seat</dt>
-              <dd className="text-sm text-[#1B1B1B]">0506</dd>
+              <dd className="text-sm text-[#1B1B1B]">{ticket.seat}</dd>
             </div>
           </dl>
         </div>
@@ -114,7 +123,7 @@ function TicketCard({ onClick }) {
         />
       </div>
 
-      {/* Mobile / tablet perforation */}
+      {/* Perforation */}
       <div className="relative block h-0 w-full lg:hidden" aria-hidden="true">
         <div className="absolute inset-x-3 top-0 border-t-2 border-dashed border-[#1B1B1B]/15" />
 
@@ -136,7 +145,6 @@ function TicketCard({ onClick }) {
           flex-row items-center justify-between
           gap-3
           px-5 py-3
-
           lg:w-28
           lg:flex-col
           lg:justify-center
@@ -151,11 +159,13 @@ function TicketCard({ onClick }) {
 
         <div className="flex items-center gap-3 lg:flex-col lg:gap-2">
           <span className="font-display text-lg font-bold tracking-wide text-[var(--ink)]">
-            EXO-L1
+            {ticket.zone}
           </span>
 
-          <span className="rounded-full bg-green-600 px-2 py-0.5 text-xs font-medium text-white">
-            Attended
+          <span
+            className={`rounded-full px-2 py-0.5 text-xs font-medium text-white capitalize ${STATUS_COLORS[ticket.status] || "bg-gray-500"}`}
+          >
+            {ticket.status}
           </span>
         </div>
       </div>

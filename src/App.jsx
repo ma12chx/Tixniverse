@@ -62,9 +62,9 @@ function getTodayInThaiTimeZone(timeZone = "Asia/Bangkok") {
 function getEventStatusLabel(eventDateStr, hasAttended) {
   const today = getTodayInThaiTimeZone();
 
-  if (eventDateStr > today) return "Upcoming";
+  if (eventDateStr > today) return "upcoming";
 
-  return hasAttended ? "Attended" : "Missed";
+  return hasAttended ? "attended" : "missed";
 }
 
 /* ---------- db <-> ui mapping ---------- */
@@ -281,25 +281,25 @@ function App() {
     const rowData = ticketToRow(ticket);
 
     // Get currently logged -in Supabase user
-    const {
-      data: { user },
-      error: userError,
-    } = await supabase.auth.getUser();
+    // const {
+    //   data: { user },
+    //   error: userError,
+    // } = await supabase.auth.getUser();
 
-    if (userError || !user) {
-      Swal.fire({
-        title: "Error!",
-        text: "You must be logged in to save a ticket.",
-        icon: "error",
-        confirmButtonText: "OK",
-      });
-      return;
-    }
+    // if (userError || !user) {
+    //   Swal.fire({
+    //     title: "Error!",
+    //     text: "You must be logged in to save a ticket.",
+    //     icon: "error",
+    //     confirmButtonText: "OK",
+    //   });
+    //   return;
+    // }
 
     if (ticketPopup.mode === EDIT_MODE.ADD) {
       const { error } = await supabase.from("ticket").insert({
         ...rowData,
-        user_id: user.id,
+        // user_id: user.id,
       });
 
       if (error) {
@@ -371,6 +371,7 @@ function App() {
           dropdownOpen={dropdownOpen}
           onDropdownChange={setDropdownOpen}
           categoryOptions={CATEGORY_OPTIONS}
+          eventTypes={EVENT_TYPES}
           selectedCategoryId={selectedCategoryId}
           onCategoryChange={handleCategoryChange}
           onAddTicket={handleAddTicket}
