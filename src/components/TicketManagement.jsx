@@ -269,7 +269,7 @@ function TicketManagement({ mode, ticket, eventType, onClose, onSave }) {
                 value={formData.eventDate}
                 onChange={(event) => set("eventDate", event.target.value)}
                 type="date"
-                className="stub-input font-mono"
+                className="stub-input"
               />
             </Field>
 
@@ -279,7 +279,7 @@ function TicketManagement({ mode, ticket, eventType, onClose, onSave }) {
                 type="time"
                 value={formData.eventTime}
                 onChange={(event) => set("eventTime", event.target.value)}
-                className="stub-input font-mono"
+                className="stub-input"
               />
             </Field>
           </div>

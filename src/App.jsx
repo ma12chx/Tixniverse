@@ -347,6 +347,7 @@ function App() {
   // --------------------------------------------------
 
   function handleOpenTicketDetails(ticket) {
+    console.log("Selected ticket:", ticket);
     setTicketDetail(ticket);
   }
 
@@ -410,6 +411,7 @@ function App() {
       {ticketDetail && (
         <TicketDetail
           ticketInfo={ticketDetail}
+          eventTypes={EVENT_TYPES}
           onEdit={handleEditTicket}
           onDelete={handleDeleteTicket}
           onClose={handleCloseTicketDetails}

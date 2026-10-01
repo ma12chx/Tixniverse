@@ -1,21 +1,12 @@
-import { X, MapPin, Pencil, Trash } from "lucide-react";
+import { X, Music2, MapPin, Pencil, Trash } from "lucide-react";
 
-const STATUS_MAP = [
-  {
-    bgColor: "bg-sky-400",
-    label: "Upcoming",
-  },
-  {
-    bgColor: "bg-green-600",
-    label: "Attended",
-  },
-  {
-    bgColor: "bg-red-500",
-    label: "bg-red-500",
-  },
-];
+const STATUS_COLORS = {
+  upcoming: "bg-sky-400",
+  attended: "bg-green-600",
+  missed: "bg-red-500",
+};
 
-function TicketDetail({ ticketInfo, onClose, onEdit, onDelete }) {
+function TicketDetail({ ticketInfo, eventTypes, onClose, onEdit, onDelete }) {
   return (
     <div
       role="dialog"
@@ -66,10 +57,11 @@ function TicketDetail({ ticketInfo, onClose, onEdit, onDelete }) {
         </button>
 
         {/* Cover */}
-        <img
-          src="https://atkmedia.allticket.com/images/up/26909/EXO_03052026_Info_SoldOut.jpg"
-          alt={ticketInfo?.eventName || "Event cover"}
-          className="
+        {ticketInfo?.cover ? (
+          <img
+            src={ticketInfo.cover}
+            alt={ticketInfo?.eventName || "Event cover"}
+            className="
             block
             aspect-[16/9]
             w-full
@@ -77,7 +69,21 @@ function TicketDetail({ ticketInfo, onClose, onEdit, onDelete }) {
             object-cover
             sm:aspect-[16/9]
           "
-        />
+          />
+        ) : (
+          <div
+            className="
+            flex h-28 shrink-0
+            items-center justify-center
+            rounded-xl
+            bg-blue-900
+            text-xl text-white/90
+          "
+            aria-hidden="true"
+          >
+            <Music2 size={24} className="shrink-0" />
+          </div>
+        )}
 
         {/* Body */}
         <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden">
@@ -117,7 +123,10 @@ function TicketDetail({ ticketInfo, onClose, onEdit, onDelete }) {
                   text-[#1B1B1B]/60
                 "
               >
-                {ticketInfo?.category}
+                {
+                  eventTypes.find((type) => type.id === ticketInfo?.eventTypeId)
+                    ?.value
+                }
               </span>
             </div>
 
@@ -148,7 +157,9 @@ function TicketDetail({ ticketInfo, onClose, onEdit, onDelete }) {
                   Date
                 </dt>
 
-                <dd className="text-md text-[#1B1B1B]">{ticketInfo?.date}</dd>
+                <dd className="text-md text-[#1B1B1B]">
+                  {ticketInfo?.eventDate}
+                </dd>
               </div>
 
               <div>
@@ -156,7 +167,9 @@ function TicketDetail({ ticketInfo, onClose, onEdit, onDelete }) {
                   Time
                 </dt>
 
-                <dd className="text-base text-[#1B1B1B]">{ticketInfo?.time}</dd>
+                <dd className="text-base text-[#1B1B1B]">
+                  {ticketInfo?.eventTime}
+                </dd>
               </div>
             </dl>
 
@@ -175,7 +188,7 @@ function TicketDetail({ ticketInfo, onClose, onEdit, onDelete }) {
                   Seat
                 </dt>
 
-                <dd className="text-base text-[#1B1B1B]">0506</dd>
+                <dd className="text-base text-[#1B1B1B]">{ticketInfo?.seat}</dd>
               </div>
             </dl>
 
@@ -187,7 +200,7 @@ function TicketDetail({ ticketInfo, onClose, onEdit, onDelete }) {
                 </dt>
 
                 <dd className="text-sm text-[#1B1B1B] sm:text-base">
-                  Dress code: Black
+                  {ticketInfo?.note || "-"}
                 </dd>
               </div>
             </dl>
@@ -214,11 +227,11 @@ function TicketDetail({ ticketInfo, onClose, onEdit, onDelete }) {
               Status:
             </span>
             <span
-              className={`rounded-full px-2 py-0.5 text-sm font-medium text-white ${
-                STATUS_MAP[ticketInfo?.status].bgColor ?? "bg-stone-400"
+              className={`rounded-full px-2 py-0.5 text-sm font-medium text-white capitalize ${
+                STATUS_COLORS[ticketInfo?.status] ?? "bg-stone-400"
               }`}
             >
-              {STATUS_MAP[ticketInfo?.status].label ?? "Unknown"}
+              {ticketInfo?.status}
             </span>
           </div>
         </div>

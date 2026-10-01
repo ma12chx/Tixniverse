@@ -20,7 +20,12 @@ function TicketCard({ eventTypes, ticket, onClick }) {
       {/* Main ticket */}
       <div className="flex flex-1 gap-4 p-5 lg:gap-5 lg:p-6">
         {/* Ticket image */}
-        {!ticket.cover ? (
+        {ticket.cover ? (
+          <img
+            src={ticket.cover}
+            className="h-20 w-20 shrink-0 rounded-xl lg:h-24 lg:w-24"
+          />
+        ) : (
           <div
             className="
             flex h-20 w-20 shrink-0
@@ -34,11 +39,6 @@ function TicketCard({ eventTypes, ticket, onClick }) {
           >
             <Music2 size={24} className="shrink-0" />
           </div>
-        ) : (
-          <img
-            src={ticket.cover}
-            className="h-20 w-20 shrink-0 rounded-xl lg:h-24 lg:w-24"
-          />
         )}
 
         {/* Ticket information */}
