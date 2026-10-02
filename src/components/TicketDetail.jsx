@@ -102,7 +102,7 @@ function TicketDetail({ ticketInfo, eventTypes, onClose, onEdit, onDelete }) {
                   sm:text-lg
                 "
               >
-                {ticketInfo?.eventName}
+                {ticketInfo?.eventName || "-"}
               </h3>
 
               <span
@@ -146,7 +146,7 @@ function TicketDetail({ ticketInfo, eventTypes, onClose, onEdit, onDelete }) {
               <MapPin size={16} className="shrink-0" />
 
               <span className="min-w-0 text-[#1B1B1B]">
-                {ticketInfo?.venue}
+                {ticketInfo?.venue || "-"}
               </span>
             </p>
 
@@ -158,7 +158,7 @@ function TicketDetail({ ticketInfo, eventTypes, onClose, onEdit, onDelete }) {
                 </dt>
 
                 <dd className="text-md text-[#1B1B1B]">
-                  {ticketInfo?.eventDate}
+                  {ticketInfo?.eventDate || "-"}
                 </dd>
               </div>
 
@@ -168,7 +168,7 @@ function TicketDetail({ ticketInfo, eventTypes, onClose, onEdit, onDelete }) {
                 </dt>
 
                 <dd className="text-base text-[#1B1B1B]">
-                  {ticketInfo?.eventTime}
+                  {ticketInfo?.eventTime || "-"}
                 </dd>
               </div>
             </dl>
@@ -180,7 +180,9 @@ function TicketDetail({ ticketInfo, eventTypes, onClose, onEdit, onDelete }) {
                   Zone
                 </dt>
 
-                <dd className="text-base text-[#1B1B1B]">{ticketInfo?.zone}</dd>
+                <dd className="text-base text-[#1B1B1B]">
+                  {ticketInfo?.zone || "-"}
+                </dd>
               </div>
 
               <div>
@@ -188,7 +190,9 @@ function TicketDetail({ ticketInfo, eventTypes, onClose, onEdit, onDelete }) {
                   Seat
                 </dt>
 
-                <dd className="text-base text-[#1B1B1B]">{ticketInfo?.seat}</dd>
+                <dd className="text-base text-[#1B1B1B]">
+                  {ticketInfo?.seat || "-"}
+                </dd>
               </div>
             </dl>
 

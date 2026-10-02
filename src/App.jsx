@@ -199,6 +199,7 @@ function App() {
         text: "Failed to load tickets, please try again.",
         icon: "error",
         confirmButtonText: "OK",
+        allowOutsideClick: false,
       });
     } else {
       setTicketList(data.map(rowToTicket));
@@ -226,6 +227,7 @@ function App() {
           text: "Failed to load tickets, please try again.",
           icon: "error",
           confirmButtonText: "OK",
+          allowOutsideClick: false,
         });
       } else {
         setTicketList(data.map(rowToTicket));
@@ -272,9 +274,34 @@ function App() {
     });
   }
 
-  function handleDeleteTicket(ticket) {
-    setTicketDetail(ticket);
-    console.log("Delete ticketId: ", ticket.id);
+  async function handleDeleteTicket(ticket) {
+    const { error } = await supabase
+      .from("ticket")
+      .update({ delete_flag: true })
+      .eq("id", ticket.id);
+
+    if (error) {
+      Swal.fire({
+        title: "Error!",
+        text: "Failed to delete ticket information.",
+        icon: "error",
+        confirmButtonText: "OK",
+        allowOutsideClick: false,
+      });
+
+      return;
+    }
+
+    Swal.fire({
+      title: "Success!",
+      text: "Ticket information deleted successfully.",
+      icon: "success",
+      confirmButtonText: "OK",
+      allowOutsideClick: false,
+    });
+
+    await loadTickets();
+    handleCloseTicketDetails();
   }
 
   async function handleSaveTicket(ticket) {
@@ -296,6 +323,7 @@ function App() {
     //   return;
     // }
 
+    // Add new ticket info.
     if (ticketPopup.mode === EDIT_MODE.ADD) {
       const { error } = await supabase.from("ticket").insert({
         ...rowData,
@@ -308,30 +336,47 @@ function App() {
           text: "Failed to add ticket information.",
           icon: "error",
           confirmButtonText: "OK",
+          allowOutsideClick: false,
         });
 
         return;
-      } else {
-        const { error } = await supabase
-          .from("ticket")
-          .update(rowData)
-          .eq("id", ticket.id);
-
-        if (error) {
-          Swal.fire({
-            title: "Error!",
-            text: "Failed to update ticket information.",
-            icon: "error",
-            confirmButtonText: "OK",
-          });
-
-          return;
-        }
       }
 
-      await loadTickets();
-      handleCloseTicketManagement();
+      Swal.fire({
+        title: "Success!",
+        text: "Ticket information added successfully.",
+        icon: "success",
+        confirmButtonText: "OK",
+        allowOutsideClick: false,
+      });
+    } else {
+      // Edit existing ticket info.
+      const { error } = await supabase
+        .from("ticket")
+        .update(rowData)
+        .eq("id", ticket.id);
+
+      if (error) {
+        Swal.fire({
+          title: "Error!",
+          text: "Failed to update ticket information.",
+          icon: "error",
+          confirmButtonText: "OK",
+          allowOutsideClick: false,
+        });
+      }
+
+      Swal.fire({
+        title: "Success!",
+        text: "Ticket information updated successfully.",
+        icon: "success",
+        confirmButtonText: "OK",
+        allowOutsideClick: false,
+      });
     }
+
+    await loadTickets();
+    handleCloseTicketManagement();
   }
 
   function handleCloseTicketManagement() {

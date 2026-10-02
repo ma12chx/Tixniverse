@@ -53,7 +53,7 @@ function TicketCard({ eventTypes, ticket, onClick }) {
                 lg:text-2xl
               "
             >
-              {ticket.eventName}
+              {ticket.eventName || "-"}
             </h3>
 
             <span
@@ -76,7 +76,7 @@ function TicketCard({ eventTypes, ticket, onClick }) {
           <p className="mt-1 flex items-center gap-1.5 truncate text-sm text-[#1B1B1B]/60">
             <MapPin size={16} className="shrink-0" />
             <span className="text-[#1B1B1B] truncate uppercase">
-              {ticket.venue}
+              {ticket.venue || "-"}
             </span>
           </p>
 
@@ -84,25 +84,29 @@ function TicketCard({ eventTypes, ticket, onClick }) {
             {/* Date */}
             <div>
               <dt className="font-mono text-[12px] text-[#1B1B1B]/45">Date</dt>
-              <dd className="text-sm text-[#1B1B1B]">{ticket.eventDate}</dd>
+              <dd className="text-sm text-[#1B1B1B]">
+                {ticket.eventDate || "-"}
+              </dd>
             </div>
 
             {/* Time */}
             <div>
               <dt className="font-mono text-[12px] text-[#1B1B1B]/45">Time</dt>
-              <dd className="text-sm text-[#1B1B1B]">{ticket.eventTime}</dd>
+              <dd className="text-sm text-[#1B1B1B]">
+                {ticket.eventTime || "-"}
+              </dd>
             </div>
 
             {/* Zone */}
             <div>
               <dt className="font-mono text-[12px] text-[#1B1B1B]/45">Zone</dt>
-              <dd className="text-sm text-[#1B1B1B]">{ticket.zone}</dd>
+              <dd className="text-sm text-[#1B1B1B]">{ticket.zone || "-"}</dd>
             </div>
 
             {/* Seat */}
             <div>
               <dt className="font-mono text-[12px] text-[#1B1B1B]/45">Seat</dt>
-              <dd className="text-sm text-[#1B1B1B]">{ticket.seat}</dd>
+              <dd className="text-sm text-[#1B1B1B]">{ticket.seat || "-"}</dd>
             </div>
           </dl>
         </div>
@@ -159,7 +163,7 @@ function TicketCard({ eventTypes, ticket, onClick }) {
 
         <div className="flex items-center gap-3 lg:flex-col lg:gap-2">
           <span className="font-display text-lg font-bold tracking-wide text-[var(--ink)]">
-            {ticket.zone}
+            {ticket.zone || "-"}
           </span>
 
           <span

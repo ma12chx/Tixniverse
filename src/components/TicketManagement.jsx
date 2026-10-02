@@ -69,6 +69,7 @@ function TicketManagement({ mode, ticket, eventType, onClose, onSave }) {
         text: "Event title and date are required.",
         icon: "warning",
         confirmButtonText: "OK",
+        allowOutsideClick: false,
       });
 
       return;
@@ -104,6 +105,7 @@ function TicketManagement({ mode, ticket, eventType, onClose, onSave }) {
         text: "Failed to save ticket information, please try again.",
         icon: "error",
         confirmButtonText: "OK",
+        allowOutsideClick: false,
       });
     } finally {
       setIsSaving(false);
@@ -132,7 +134,7 @@ function TicketManagement({ mode, ticket, eventType, onClose, onSave }) {
             <X size={20} />
           </button>
         </div>
-        {/* TODO - onSubmit() */}
+
         <form onSubmit={handleSubmit} className="px-5 py-5 flex flex-col gap-4">
           <div>
             <label
