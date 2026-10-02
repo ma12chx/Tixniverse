@@ -136,7 +136,7 @@ function App() {
   const upcomingCount = useMemo(
     () =>
       categoryFilteredList.filter(
-        (ticket) => ticket.status === FILTER_TYPES[1].label,
+        (ticket) => ticket.status === FILTER_TYPES[1].label.toLowerCase(),
       ).length,
     [categoryFilteredList],
   );
@@ -173,9 +173,9 @@ function App() {
       const matchesStatus =
         filterStatus === FILTER_TYPES[0].value || // All
         (filterStatus === FILTER_TYPES[1].value &&
-          ticket.status === FILTER_TYPES[1].label) || // Upcoming
+          ticket.status === FILTER_TYPES[1].label.toLowerCase()) || // Upcoming
         (filterStatus === FILTER_TYPES[2].value &&
-          ticket.status !== FILTER_TYPES[1].label); // Past
+          ticket.status !== FILTER_TYPES[1].label.toLowerCase()); // Past
 
       return matchesSearch && matchesStatus;
     });
@@ -219,7 +219,7 @@ function App() {
       .from("ticket")
       .select("*, event_type_rel:event_type(type_name)")
       .eq("delete_flag", false)
-      .order("event_date", { ascending: true });
+      .order("event_date", { ascending: false });
 
     if (error) {
       Swal.fire({
@@ -244,7 +244,7 @@ function App() {
         .from("ticket")
         .select("*, event_type_rel:event_type(type_name)")
         .eq("delete_flag", false)
-        .order("event_date", { ascending: true });
+        .order("event_date", { ascending: false });
 
       // component unmounted or effect re-ran before this resolved
       if (cancelled) return;
