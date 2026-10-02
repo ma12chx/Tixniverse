@@ -1,9 +1,6 @@
-import { useState } from "react";
 import { Search } from "lucide-react";
 
-function SearchBox() {
-  const [search, setSearch] = useState("");
-
+function SearchBox({ searchInput, onSearchChange }) {
   return (
     <>
       <div
@@ -13,8 +10,8 @@ function SearchBox() {
         <Search size={16} style={{ color: "var(--muted)" }} />
         <input
           type="text"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          value={searchInput}
+          onChange={(e) => onSearchChange(e.target.value)}
           placeholder="Search your collection"
           className="flex-1 bg-transparent outline-none text-sm min-w-0"
         />

@@ -18,6 +18,9 @@ function Collection({
   onFilterChange,
   upcomingCount,
   pastCount,
+  searchInput,
+  onSearchChange,
+  isSearchFiltering,
 }) {
   return (
     <>
@@ -25,7 +28,10 @@ function Collection({
       <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-6 pb-2">
         <div className="flex items-center gap-2 w-full">
           <div className="flex-1 min-w-0">
-            <SearchBox />
+            <SearchBox
+              searchInput={searchInput}
+              onSearchChange={onSearchChange}
+            />
           </div>
 
           <SearchFilter
@@ -73,7 +79,10 @@ function Collection({
             Loading your collection…
           </p>
         ) : tickets.length === 0 ? (
-          <EmptyCollection onAddTicket={onAddTicket} />
+          <EmptyCollection
+            isSearchFiltering={isSearchFiltering}
+            onAddTicket={onAddTicket}
+          />
         ) : (
           <div className="grid grid-cols-1 xl:grid-cols-1 gap-5">
             {tickets.map((ticket) => (

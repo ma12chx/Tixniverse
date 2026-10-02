@@ -117,13 +117,16 @@ function App() {
   const [ticketList, setTicketList] = useState([]);
   const [isTicketListLoaded, setIsTicketLoaded] = useState(false);
 
-  // Search filter
+  // Search input + status filter
+  const [searchInput, setSearchInput] = useState("");
   const [filterStatus, setFilterStatus] = useState(FILTER_TYPES[0].value);
 
   // Category filter: Use to compute counts
   const categoryFilteredList = useMemo(() => {
     // Category: All -> return all tickets
-    if (selectedCategoryId === CATEGORY_OPTIONS[0].id) return ticketList;
+    if (selectedCategoryId === CATEGORY_OPTIONS[0].id) {
+      return ticketList;
+    }
 
     return ticketList.filter(
       (ticket) => ticket.eventTypeId === selectedCategoryId,
@@ -140,24 +143,49 @@ function App() {
 
   const pastCount = categoryFilteredList.length - upcomingCount;
 
-  // Category + status combined
+  // Search + Category + status combined
   const filteredTicketList = useMemo(() => {
-    // Filter: Upcoming
-    if (filterStatus === FILTER_TYPES[1].value) {
-      return categoryFilteredList.filter(
-        (ticket) => ticket.status === FILTER_TYPES[1].label,
-      );
+    const keyword = searchInput.trim().toLowerCase();
+
+    if (!keyword && filterStatus === FILTER_TYPES[0].value) {
+      return categoryFilteredList;
     }
 
-    // Filter: Past
-    if (filterStatus === FILTER_TYPES[2].value) {
-      return categoryFilteredList.filter(
-        (ticket) => ticket.status !== FILTER_TYPES[1].label,
-      );
-    }
+    return categoryFilteredList.filter((ticket) => {
+      // Search filter
+      const matchesSearch =
+        !keyword ||
+        [
+          ticket.eventName,
+          ticket.artist,
+          ticket.venue,
+          ticket.hall,
+          ticket.zone,
+          ticket.seat,
+          ticket.notes,
+        ].some((value) =>
+          String(value ?? "")
+            .toLowerCase()
+            .includes(keyword),
+        );
 
-    return categoryFilteredList;
-  }, [categoryFilteredList, filterStatus]);
+      // Status filter
+      const matchesStatus =
+        filterStatus === FILTER_TYPES[0].value || // All
+        (filterStatus === FILTER_TYPES[1].value &&
+          ticket.status === FILTER_TYPES[1].label) || // Upcoming
+        (filterStatus === FILTER_TYPES[2].value &&
+          ticket.status !== FILTER_TYPES[1].label); // Past
+
+      return matchesSearch && matchesStatus;
+    });
+  }, [categoryFilteredList, filterStatus, searchInput]);
+
+  // Check whether any search or filter is active
+  const isSearchFiltering =
+    searchInput.trim() !== "" ||
+    selectedCategoryId !== CATEGORY_OPTIONS[0].id ||
+    filterStatus !== FILTER_TYPES[0].value;
 
   // Add / Edit ticket popup
   const [ticketPopup, setTicketPopup] = useState({
@@ -392,7 +420,6 @@ function App() {
   // --------------------------------------------------
 
   function handleOpenTicketDetails(ticket) {
-    console.log("Selected ticket:", ticket);
     setTicketDetail(ticket);
   }
 
@@ -426,6 +453,9 @@ function App() {
           onFilterChange={setFilterStatus}
           upcomingCount={upcomingCount}
           pastCount={pastCount}
+          searchInput={searchInput}
+          onSearchChange={setSearchInput}
+          isSearchFiltering={isSearchFiltering}
         />
       )}
 
