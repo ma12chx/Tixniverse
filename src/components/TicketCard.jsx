@@ -1,12 +1,15 @@
-import { MapPin, Music2 } from "lucide-react";
+import { MapPin } from "lucide-react";
 
-const STATUS_COLORS = {
-  upcoming: "bg-sky-400",
-  attended: "bg-green-600",
-  missed: "bg-red-500",
-};
+import { getDaysUntil, formatDaysUntil } from "../utils/DateUtils";
+import { EVENT_TYPES, STATUS } from "../utils/Constants";
+import { getEventType } from "../utils/Common";
 
-function TicketCard({ eventTypes, ticket, onClick }) {
+import EventTypeIcon from "./EventTypeIcon";
+
+function TicketCard({ ticket, onClick }) {
+  const eventType = getEventType(ticket.eventTypeId);
+  const days = getDaysUntil(ticket.eventDate);
+
   return (
     <button
       style={{ backgroundColor: "#fff" }}
@@ -37,7 +40,11 @@ function TicketCard({ eventTypes, ticket, onClick }) {
           "
             aria-hidden="true"
           >
-            <Music2 size={24} className="shrink-0" />
+            <EventTypeIcon
+              icon={eventType?.Icon}
+              size={24}
+              className="shrink-0"
+            />
           </div>
         )}
 
@@ -68,17 +75,19 @@ function TicketCard({ eventTypes, ticket, onClick }) {
                 text-[#1B1B1B]/60
               "
             >
-              {eventTypes.find((type) => type.id === ticket.eventTypeId).value}
+              {EVENT_TYPES.find((type) => type.id === ticket.eventTypeId).value}
             </span>
           </div>
 
           {/* Venue */}
-          <p className="mt-1 flex items-center gap-1.5 truncate text-sm text-[#1B1B1B]/60">
-            <MapPin size={16} className="shrink-0" />
-            <span className="text-[#1B1B1B] truncate uppercase">
-              {ticket.venue || "-"}
-            </span>
-          </p>
+          {ticket.venue && (
+            <p className="mt-1 flex items-center gap-1.5 truncate text-sm text-[#1B1B1B]/60">
+              <MapPin size={16} className="shrink-0" />
+              <span className="text-[#1B1B1B] truncate uppercase">
+                {ticket.venue || "-"}
+              </span>
+            </p>
+          )}
 
           <dl className="mt-4 grid grid-cols-2 gap-x-4 gap-y-3 sm:grid-cols-4">
             {/* Date */}
@@ -157,19 +166,19 @@ function TicketCard({ eventTypes, ticket, onClick }) {
           lg:py-6
         "
       >
-        <span className="font-display text-xs font-semibold tracking-wide text-[#1B1B1B]/60">
-          ZONE
+        <span className="font-mono text-xs tracking-wide text-[#1B1B1B]/60">
+          Status
         </span>
 
         <div className="flex items-center gap-3 lg:flex-col lg:gap-2">
-          <span className="font-display text-lg font-bold tracking-wide text-[var(--ink)]">
-            {ticket.zone || "-"}
-          </span>
-
           <span
-            className={`rounded-full px-2 py-0.5 text-xs font-medium text-white capitalize ${STATUS_COLORS[ticket.status] || "bg-gray-500"}`}
+            className={`rounded-full px-2 py-0.5 text-xs font-medium text-white capitalize ${STATUS[ticket.status]["bgColor"] || "bg-gray-500"}`}
           >
             {ticket.status}
+          </span>
+
+          <span className="font-display text-xs text-center font-bold tracking-wide text-[var(--ink)]">
+            {formatDaysUntil(days)}
           </span>
         </div>
       </div>

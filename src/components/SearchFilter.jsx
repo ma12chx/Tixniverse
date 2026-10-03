@@ -1,10 +1,5 @@
 import { ChevronDown, ChevronUp } from "lucide-react";
-
-const FILTER_OPTIONS = {
-  ALL: 0,
-  UPCOMING: 1,
-  PAST: 2,
-};
+import { FILTER_TYPES } from "../utils/Constants.js";
 
 function SearchFilter({
   filterStatus,
@@ -15,22 +10,28 @@ function SearchFilter({
   onDropdownChange,
 }) {
   function handleFilterChange() {
-    if (filterStatus === FILTER_OPTIONS.ALL) {
-      onFilterChange(FILTER_OPTIONS.UPCOMING);
-    } else if (filterStatus === FILTER_OPTIONS.UPCOMING) {
-      onFilterChange(FILTER_OPTIONS.PAST);
+    if (filterStatus === FILTER_TYPES[0].value) {
+      // All -> Upcoming
+      onFilterChange(FILTER_TYPES[1].value);
+    } else if (filterStatus === FILTER_TYPES[1].value) {
+      // Upcoming -> Past
+      onFilterChange(FILTER_TYPES[2].value);
     } else {
-      onFilterChange(FILTER_OPTIONS.ALL);
+      // Back to All
+      onFilterChange(FILTER_TYPES[0].value);
     }
   }
 
   function getFilterButtonTitle() {
-    if (filterStatus === FILTER_OPTIONS.ALL) {
-      return "All";
-    } else if (filterStatus === FILTER_OPTIONS.UPCOMING) {
-      return `Upcoming (${upcomingCount})`;
+    if (filterStatus === FILTER_TYPES[0].value) {
+      // All
+      return FILTER_TYPES[0].label;
+    } else if (filterStatus === FILTER_TYPES[1].value) {
+      // Upcoming
+      return `${FILTER_TYPES[1].label} (${upcomingCount})`;
     } else {
-      return `Past (${pastCount})`;
+      // Pasr
+      return `${FILTER_TYPES[2].label} (${pastCount})`;
     }
   }
 

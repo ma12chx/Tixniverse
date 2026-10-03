@@ -6,7 +6,7 @@ function Field({ label, required, children }) {
         style={{ color: "var(--muted)" }}
       >
         {label}
-        {required ? " *" : ""}
+        <span className="text-red-500">{required ? " *" : ""}</span>
       </span>
       {children}
     </label>

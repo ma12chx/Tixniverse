@@ -7,6 +7,8 @@ import Field from "./Field";
 
 import { supabase } from "../lib/supabaseClient.js";
 
+import { EVENT_TYPES } from "../utils/Constants";
+
 function buildInitialForm(ticket) {
   return {
     id: ticket?.id ?? null,
@@ -40,7 +42,7 @@ async function uploadCover(file) {
   return data.publicUrl;
 }
 
-function TicketManagement({ mode, ticket, eventType, onClose, onSave }) {
+function TicketManagement({ mode, ticket, onClose, onSave }) {
   const isEdit = mode === 1;
 
   const title = isEdit ? "Edit ticket" : "Add ticket";
@@ -294,7 +296,7 @@ function TicketManagement({ mode, ticket, eventType, onClose, onSave }) {
                 onChange={(event) => set("eventTypeId", event.target.value)}
                 className="stub-input"
               >
-                {eventType.map((type) => (
+                {EVENT_TYPES.map((type) => (
                   <option key={type.id} value={type.id}>
                     {type.value}
                   </option>

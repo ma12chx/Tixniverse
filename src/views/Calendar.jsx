@@ -1,12 +1,12 @@
-import { ChevronLeft, ChevronRight, Clock, Ticket, Star } from "lucide-react";
+import { ChevronLeft, ChevronRight, Clock, Ticket } from "lucide-react";
 
-const DAY_LABEL = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+import {
+  DAY_LABEL,
+  getDateInThaiTimeZone,
+  formatDatePretty,
+} from "../utils/DateUtils";
 
-const STATUS_COLORS = {
-  upcoming: "bg-sky-400",
-  attended: "bg-green-600",
-  missed: "bg-red-500",
-};
+import { EVENT_TYPES, STATUS } from "../utils/Constants";
 
 function getMonthGrid(currentDate) {
   const currentYear = currentDate.getFullYear();
@@ -29,33 +29,6 @@ function getMonthGrid(currentDate) {
   return cells;
 }
 
-function getDateKey(date, timeZone = "Asia/Bangkok") {
-  return new Intl.DateTimeFormat("en-CA", {
-    timeZone,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).format(date);
-}
-
-function formatDatePretty(dateStr) {
-  if (!dateStr) {
-    return "";
-  }
-
-  const date = new Date(dateStr + "T00:00:00");
-
-  if (isNaN(date.getTime())) {
-    return "";
-  }
-
-  return date.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
-}
-
 function Calendar({
   currentDate,
   setCurrentDate,
@@ -63,7 +36,6 @@ function Calendar({
   setSelectedDate,
   ticketsByDate,
   onSelectEvent,
-  eventTypes,
 }) {
   const currentMonthLabel = currentDate.toLocaleDateString("en-US", {
     month: "long",
@@ -71,12 +43,13 @@ function Calendar({
   });
 
   const cells = getMonthGrid(currentDate);
-  const todayStr = getDateKey(new Date());
+  const todayStr = getDateInThaiTimeZone(new Date());
   const dayList = selectedDate ? ticketsByDate[selectedDate] || [] : [];
 
   const getEventTypeIcon = (eventTypeId) => {
     return (
-      eventTypes.find((type) => type.id === Number(eventTypeId))?.Icon || Ticket
+      EVENT_TYPES.find((type) => type.id === Number(eventTypeId))?.Icon ||
+      Ticket
     );
   };
 
@@ -131,7 +104,7 @@ function Calendar({
         {cells.map((date, index) => {
           if (!date) return <div key={index} />;
 
-          const dateKey = getDateKey(date);
+          const dateKey = getDateInThaiTimeZone(date);
           const eventDateMarker = ticketsByDate[dateKey] || [];
           const isToday = dateKey === todayStr;
           const isSelected = dateKey === selectedDate;
@@ -159,7 +132,9 @@ function Calendar({
                   <span
                     key={idx}
                     className="w-2 h-2 rounded-full"
-                    style={{ background: "var(--purple)" }}
+                    style={{
+                      background: isSelected ? "var(--green)" : "var(--purple)",
+                    }}
                   />
                 ))}
               </div>
@@ -236,7 +211,7 @@ function Calendar({
                     {/* Event Status */}
                     <span
                       className={`rounded-full px-2 py-0.5 text-xs font-semibold capitalize flex-shrink-0 text-white ${
-                        STATUS_COLORS[ticket.status] || "bg-gray-500"
+                        STATUS[ticket.status]["bgColor"] || "bg-gray-500"
                       }`}
                     >
                       {ticket.status || "unknown"}

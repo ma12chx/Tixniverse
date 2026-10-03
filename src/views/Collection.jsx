@@ -3,13 +3,13 @@ import SearchFilter from "../components/SearchFilter.jsx";
 import EmptyCollection from "../components/EmptyCollection.jsx";
 import TicketCard from "../components/TicketCard.jsx";
 
+import { CATEGORY_OPTIONS } from "../utils/Constants.js";
+
 function Collection({
   tickets,
   IsTicketsLoaded,
   dropdownOpen,
   onDropdownChange,
-  categoryOptions,
-  eventTypes,
   selectedCategoryId,
   onCategoryChange,
   onAddTicket,
@@ -49,7 +49,7 @@ function Collection({
       {dropdownOpen && (
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-2">
           <div className="flex flex-nowrap gap-2 overflow-x-auto justify-start sm:justify-center pb-2 scrollbar-hide">
-            {categoryOptions.map(({ id, value, Icon }) => (
+            {CATEGORY_OPTIONS.map(({ id, value, Icon }) => (
               <button
                 key={id}
                 onClick={() => onCategoryChange(id)}
@@ -88,7 +88,6 @@ function Collection({
             {tickets.map((ticket) => (
               <TicketCard
                 key={ticket.id}
-                eventTypes={eventTypes}
                 ticket={ticket}
                 onClick={() => onOpenTicketDetails(ticket)}
               />

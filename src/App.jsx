@@ -1,15 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
 
-import {
-  LayoutGrid,
-  MicVocal,
-  Users,
-  Tv,
-  TvMinimalPlay,
-  PartyPopper,
-  Ticket,
-} from "lucide-react";
-
 import Swal from "sweetalert2";
 import { supabase } from "./lib/supabaseClient.js";
 
@@ -20,89 +10,14 @@ import TicketDetail from "./components/TicketDetail.jsx";
 import CollectionView from "./views/Collection.jsx";
 import CalendarView from "./views/Calendar.jsx";
 
-const VIEW = {
-  COLLECTION: "collection",
-  CALENDAR: "calendar",
-};
+import { rowToTicket, ticketToRow } from "./utils/Common.js";
 
-const EVENT_TYPES = [
-  { id: 1, value: "Concert", Icon: MicVocal },
-  { id: 2, value: "Fan Meeting", Icon: Users },
-  { id: 3, value: "Live", Icon: Tv },
-  { id: 4, value: "Online Streaming", Icon: TvMinimalPlay },
-  { id: 5, value: "Festival", Icon: PartyPopper },
-  { id: 6, value: "Other", Icon: Ticket },
-];
-
-const CATEGORY_OPTIONS = [
-  { id: 0, value: "All", Icon: LayoutGrid },
-  ...EVENT_TYPES,
-];
-
-const FILTER_TYPES = [
-  { value: 0, label: "All" },
-  { value: 1, label: "Upcoming" },
-  { value: 2, label: "Past" },
-];
-
-const EDIT_MODE = {
-  ADD: 0,
-  EDIT: 1,
-};
-
-function getTodayInThaiTimeZone(timeZone = "Asia/Bangkok") {
-  return Intl.DateTimeFormat("en-CA", {
-    timeZone: timeZone,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).format(new Date());
-}
-
-function getEventStatusLabel(eventDateStr, hasAttended) {
-  const today = getTodayInThaiTimeZone();
-
-  if (eventDateStr > today) return "upcoming";
-
-  return hasAttended ? "attended" : "missed";
-}
-
-/* ---------- db <-> ui mapping ---------- */
-function rowToTicket(row) {
-  return {
-    id: row.id,
-    eventName: row.event_name,
-    artist: row.artist,
-    eventTypeId: row.event_type,
-    eventDate: row.event_date,
-    eventTime: row.event_time ? row.event_time.slice(0, 5) : "",
-    hasAttended: row.has_attended,
-    status: getEventStatusLabel(row.event_date, row.has_attended),
-    venue: row.venue,
-    hall: row.hall,
-    zone: row.zone,
-    seat: row.seat,
-    notes: row.notes,
-    cover: row.cover_url,
-  };
-}
-
-function ticketToRow(ticket) {
-  return {
-    event_name: ticket.eventName,
-    artist: ticket.artist || null,
-    event_type: ticket.eventTypeId,
-    event_date: ticket.eventDate,
-    event_time: ticket.eventTime || null,
-    has_attended: ticket.hasAttended ?? false,
-    venue: ticket.venue || null,
-    hall: ticket.hall || null,
-    zone: ticket.zone || null,
-    seat: ticket.seat || null,
-    notes: ticket.notes || null,
-    cover_url: ticket.cover || null,
-  };
-}
+import {
+  VIEW,
+  CATEGORY_OPTIONS,
+  EDIT_MODE,
+  FILTER_TYPES,
+} from "./utils/Constants.js";
 
 function App() {
   const [selectedView, setSelectedView] = useState(VIEW.COLLECTION);
@@ -456,8 +371,6 @@ function App() {
           IsTicketsLoaded={isTicketListLoaded}
           dropdownOpen={dropdownOpen}
           onDropdownChange={setDropdownOpen}
-          categoryOptions={CATEGORY_OPTIONS}
-          eventTypes={EVENT_TYPES}
           selectedCategoryId={selectedCategoryId}
           onCategoryChange={handleCategoryChange}
           onAddTicket={handleAddTicket}
@@ -481,7 +394,6 @@ function App() {
           selectedDate={selectedDate}
           setSelectedDate={setSelectedDate}
           onSelectEvent={handleOpenTicketDetails}
-          eventTypes={EVENT_TYPES}
         />
       )}
 
@@ -490,7 +402,6 @@ function App() {
         <TicketManagement
           mode={ticketPopup.mode}
           ticket={ticketPopup.ticket}
-          eventType={EVENT_TYPES}
           onClose={handleCloseTicketManagement}
           onSave={handleSaveTicket}
         />
@@ -500,7 +411,6 @@ function App() {
       {ticketDetail && (
         <TicketDetail
           ticketInfo={ticketDetail}
-          eventTypes={EVENT_TYPES}
           onEdit={handleEditTicket}
           onDelete={handleDeleteTicket}
           onClose={handleCloseTicketDetails}

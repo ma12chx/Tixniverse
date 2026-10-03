@@ -1,12 +1,13 @@
-import { X, Music2, MapPin, Pencil, Trash } from "lucide-react";
+import { X, MapPin, Pencil, Trash } from "lucide-react";
 
-const STATUS_COLORS = {
-  upcoming: "bg-sky-400",
-  attended: "bg-green-600",
-  missed: "bg-red-500",
-};
+import EventTypeIcon from "./EventTypeIcon";
 
-function TicketDetail({ ticketInfo, eventTypes, onClose, onEdit, onDelete }) {
+import { getEventType } from "../utils/Common";
+import { EVENT_TYPES, STATUS } from "../utils/Constants";
+
+function TicketDetail({ ticketInfo, onClose, onEdit, onDelete }) {
+  const eventType = getEventType(ticketInfo.eventTypeId);
+
   return (
     <div
       role="dialog"
@@ -81,7 +82,11 @@ function TicketDetail({ ticketInfo, eventTypes, onClose, onEdit, onDelete }) {
           "
             aria-hidden="true"
           >
-            <Music2 size={24} className="shrink-0" />
+            <EventTypeIcon
+              icon={eventType?.Icon}
+              size={24}
+              className="shrink-0"
+            />
           </div>
         )}
 
@@ -124,15 +129,17 @@ function TicketDetail({ ticketInfo, eventTypes, onClose, onEdit, onDelete }) {
                 "
               >
                 {
-                  eventTypes.find((type) => type.id === ticketInfo?.eventTypeId)
-                    ?.value
+                  EVENT_TYPES.find(
+                    (type) => type.id === ticketInfo?.eventTypeId,
+                  )?.value
                 }
               </span>
             </div>
 
             {/* Venue */}
-            <p
-              className="
+            {ticketInfo?.venue && (
+              <p
+                className="
                 mt-3
                 flex
                 min-w-0
@@ -142,13 +149,14 @@ function TicketDetail({ ticketInfo, eventTypes, onClose, onEdit, onDelete }) {
                 text-[#1B1B1B]/60
                 uppercase
               "
-            >
-              <MapPin size={16} className="shrink-0" />
+              >
+                <MapPin size={16} className="shrink-0" />
 
-              <span className="min-w-0 text-[#1B1B1B]">
-                {ticketInfo?.venue || "-"}
-              </span>
-            </p>
+                <span className="min-w-0 text-[#1B1B1B]">
+                  {ticketInfo?.venue || "-"}
+                </span>
+              </p>
+            )}
 
             {/* Date / Time */}
             <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-4 sm:mt-3">
@@ -232,7 +240,7 @@ function TicketDetail({ ticketInfo, eventTypes, onClose, onEdit, onDelete }) {
             </span>
             <span
               className={`rounded-full px-2 py-0.5 text-sm font-medium text-white capitalize ${
-                STATUS_COLORS[ticketInfo?.status] ?? "bg-stone-400"
+                STATUS[ticketInfo?.status]["bgColor"] ?? "bg-stone-400"
               }`}
             >
               {ticketInfo?.status}
