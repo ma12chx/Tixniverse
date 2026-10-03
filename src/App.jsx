@@ -201,6 +201,19 @@ function App() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(null);
 
+  const ticketsByDate = useMemo(() => {
+    const ticketMap = {};
+
+    ticketList.forEach((ticket) => {
+      if (!ticket.eventDate) return;
+      (ticketMap[ticket.eventDate] = ticketMap[ticket.eventDate] || []).push(
+        ticket,
+      );
+    });
+
+    return ticketMap;
+  }, [ticketList]);
+
   // --------------------------------------------------
   // Collection View
   // --------------------------------------------------
@@ -462,12 +475,13 @@ function App() {
       {/* Calendar */}
       {selectedView === VIEW.CALENDAR && (
         <CalendarView
-          tickets={filteredTicketList}
+          ticketsByDate={ticketsByDate}
           currentDate={currentDate}
           setCurrentDate={setCurrentDate}
           selectedDate={selectedDate}
           setSelectedDate={setSelectedDate}
           onSelectEvent={handleOpenTicketDetails}
+          eventTypes={EVENT_TYPES}
         />
       )}
 

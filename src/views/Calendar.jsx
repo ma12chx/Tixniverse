@@ -1,6 +1,12 @@
-import { ChevronLeft, ChevronRight, Clock } from "lucide-react";
+import { ChevronLeft, ChevronRight, Clock, Ticket, Star } from "lucide-react";
 
-const DAY_LABEL = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
+const DAY_LABEL = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+const STATUS_COLORS = {
+  upcoming: "bg-sky-400",
+  attended: "bg-green-600",
+  missed: "bg-red-500",
+};
 
 function getMonthGrid(currentDate) {
   const currentYear = currentDate.getFullYear();
@@ -50,31 +56,14 @@ function formatDatePretty(dateStr) {
   });
 }
 
-function formatTimePretty(time) {
-  if (!time) {
-    return "";
-  }
-
-  const [hour, month] = time.split(":");
-  let hh = parseInt(hour, 10);
-  const ap = hh >= 12 ? "PM" : "AM";
-
-  hh = hh % 12;
-
-  if (hh === 0) {
-    hh = 12;
-  }
-
-  return `${hh}:${month} ${ap}`;
-}
-
 function Calendar({
   currentDate,
   setCurrentDate,
   selectedDate,
   setSelectedDate,
-  tickets,
+  ticketsByDate,
   onSelectEvent,
+  eventTypes,
 }) {
   const currentMonthLabel = currentDate.toLocaleDateString("en-US", {
     month: "long",
@@ -83,6 +72,13 @@ function Calendar({
 
   const cells = getMonthGrid(currentDate);
   const todayStr = getDateKey(new Date());
+  const dayList = selectedDate ? ticketsByDate[selectedDate] || [] : [];
+
+  const getEventTypeIcon = (eventTypeId) => {
+    return (
+      eventTypes.find((type) => type.id === Number(eventTypeId))?.Icon || Ticket
+    );
+  };
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6">
@@ -122,7 +118,7 @@ function Calendar({
         {DAY_LABEL.map((day, index) => (
           <div
             key={index}
-            className="text-center text-xs font-semibold font-mono py-1"
+            className="text-center text-xs font-semibold uppercase py-1"
             style={{ color: "var(--muted)" }}
           >
             {day}
@@ -136,6 +132,7 @@ function Calendar({
           if (!date) return <div key={index} />;
 
           const dateKey = getDateKey(date);
+          const eventDateMarker = ticketsByDate[dateKey] || [];
           const isToday = dateKey === todayStr;
           const isSelected = dateKey === selectedDate;
 
@@ -143,7 +140,7 @@ function Calendar({
             <button
               key={dateKey}
               onClick={() => setSelectedDate(dateKey)}
-              className="aspect-square rounded-lg flex items-center justify-center cursor-pointer"
+              className="relative aspect-square rounded-lg flex items-center justify-center cursor-pointer"
               style={{
                 background: isSelected ? "var(--ink)" : "#fff",
                 border: isToday
@@ -153,6 +150,19 @@ function Calendar({
               }}
             >
               <span className="text-sm">{date.getDate()}</span>
+
+              <div
+                className="absolute flex justify-center gap-1"
+                style={{ top: "calc(50% + 12px)" }}
+              >
+                {eventDateMarker.slice(0, 1).map((event, idx) => (
+                  <span
+                    key={idx}
+                    className="w-2 h-2 rounded-full"
+                    style={{ background: "var(--purple)" }}
+                  />
+                ))}
+              </div>
             </button>
           );
         })}
@@ -167,65 +177,75 @@ function Calendar({
           >
             {formatDatePretty(selectedDate)}
           </p>
-          {/* No events on this date - TODO */}
-          <p className="text-sm" style={{ color: "var(--muted)" }}>
-            No events on this date.
-          </p>
 
-          {/* Event list - TODO */}
-          <div className="flex flex-col gap-2">
-            <button
-              onClick={() =>
-                onSelectEvent({
-                  id: 1,
-                  eventName: "EXO PLANET #6 - EXhOrizon in BANGKOK [DAY 2]",
-                  venue: "Impact Arena",
-                  date: "2026/05/17",
-                  time: "16:00",
-                  category: "Concert",
-                  zone: "EXO-L1",
-                  status: 1,
-                })
-              }
-              className="flex items-center gap-3 rounded-lg p-2.5 text-left"
-              style={{
-                border: "1px solid var(--line)",
-                background: "#fff",
-              }}
-            >
-              <div
-                className="w-14 h-14 rounded-md overflow-hidden flex-shrink-0 flex items-center justify-center"
-                style={{
-                  background: "linear-gradient(135deg, var(--ink), #33406b)",
-                }}
-              >
-                {/* TODO */}
-                <img
-                  src="https://atkmedia.allticket.com/images/up/26909/EXO_03052026_Info_SoldOut.jpg"
-                  className="w-full h-full object-cover"
-                />
-              </div>
+          {dayList.length === 0 ? (
+            <p className="text-sm" style={{ color: "var(--muted)" }}>
+              No events on this date.
+            </p>
+          ) : (
+            <div className="flex flex-col gap-2">
+              {dayList.map((ticket) => {
+                const EventTypeIcon = getEventTypeIcon(ticket.eventTypeId);
 
-              {/* Ticket details */}
-              <div className="flex-1 min-w-0">
-                {/* Event name */}
-                <p className="text-sm font-semibold truncate">
-                  EXO PLANET #6 - EXhOrizon in BANGKOK [DAY 2]
-                </p>
+                return (
+                  <button
+                    key={ticket.id}
+                    onClick={() => onSelectEvent(ticket)}
+                    className="flex items-center gap-3 rounded-lg p-2.5 text-left"
+                    style={{
+                      border: "1px solid var(--line)",
+                      background: "#fff",
+                    }}
+                  >
+                    {/* Cover or Event Type Icon */}
+                    <div
+                      className="w-14 h-14 rounded-md overflow-hidden flex-shrink-0 flex items-center justify-center"
+                      style={{
+                        background:
+                          "linear-gradient(135deg, var(--ink), #33406b)",
+                        color: "#fff",
+                      }}
+                    >
+                      {ticket.cover ? (
+                        <img
+                          src={ticket.cover}
+                          alt={ticket.eventName || "Event Cover"}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <EventTypeIcon size={20} />
+                      )}
+                    </div>
 
-                {/* Event time */}
-                <p className="flex items-center gap-1.5 mt-1 text-sm font-mono">
-                  <Clock size={14} className="shrink-0" />
-                  <span className="min-w-0">{formatTimePretty("16:00")}</span>
-                </p>
-              </div>
+                    {/* Ticket Info */}
+                    <div className="flex-1 min-w-0">
+                      {/* Event Name */}
+                      <p className="text-sm font-semibold truncate">
+                        {ticket.eventName || "-"}
+                      </p>
 
-              {/* Event status (badge) */}
-              <span className="rounded-full px-2 py-0.5 text-xs bg-green-600 text-white font-semibold flex-shrink-0">
-                Attended
-              </span>
-            </button>
-          </div>
+                      {/* Event Time */}
+                      {ticket.eventTime && (
+                        <p className="flex items-center gap-1.5 mt-1 text-sm">
+                          <Clock size={14} className="shrink-0" />
+                          <span>{ticket.eventTime || "-"}</span>
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Event Status */}
+                    <span
+                      className={`rounded-full px-2 py-0.5 text-xs font-semibold capitalize flex-shrink-0 text-white ${
+                        STATUS_COLORS[ticket.status] || "bg-gray-500"
+                      }`}
+                    >
+                      {ticket.status || "unknown"}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
         </div>
       )}
     </div>
