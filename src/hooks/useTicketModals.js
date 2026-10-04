@@ -19,6 +19,7 @@ export function useTicketModals() {
   }
 
   function openEditTicket(ticket) {
+    closeTicketDetails();
     setTicketPopup({
       isOpen: true,
       mode: EDIT_MODE.EDIT,
