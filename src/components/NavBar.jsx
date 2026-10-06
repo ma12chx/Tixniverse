@@ -1,11 +1,11 @@
-import { Galaxy, LayoutGrid, CalendarDays, Plus } from "lucide-react";
+import { Galaxy, LayoutGrid, CalendarDays, Plus, LogOut } from "lucide-react";
 
 const VIEW = {
   COLLECTION: "collection",
   CALENDAR: "calendar",
 };
 
-function NavBar({ view, onViewChange, onAddTicket }) {
+function NavBar({ view, onViewChange, onAddTicket, onSignOut }) {
   return (
     <header className="sticky top-0 z-20" style={{ background: "var(--ink)" }}>
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between gap-3">
@@ -50,12 +50,21 @@ function NavBar({ view, onViewChange, onAddTicket }) {
         </div>
 
         <div className="flex items-center gap-2 flex-shrink-0">
+          {/* Add Ticket button */}
           <button
             onClick={onAddTicket}
             className="flex items-center gap-1.5 rounded-full px-3 sm:px-4 py-2 font-medium bg-[var(--purple)] hover:bg-indigo-600 text-sm text-white"
           >
             <Plus size={16} />
             <span className="hidden sm:inline">Add ticket</span>
+          </button>
+
+          {/* Sign Out button */}
+          <button
+            onClick={onSignOut}
+            className="p-2 rounded-full cursor-pointer text-white"
+          >
+            <LogOut size={20} />
           </button>
         </div>
       </div>

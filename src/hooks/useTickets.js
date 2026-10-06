@@ -110,6 +110,11 @@ export function useTickets() {
     }
 
     await loadTickets();
+    showSuccessfulMessage(
+      mode === EDIT_MODE.ADD
+        ? "Ticket information added successfully."
+        : "Ticket information updated successfully.",
+    );
     return true;
   }
 

@@ -4,11 +4,13 @@ import NavBar from "./components/NavBar.jsx";
 import TicketManagement from "./components/TicketManagement.jsx";
 import TicketDetail from "./components/TicketDetail.jsx";
 
+import LoginView from "./views/Login.jsx";
 import CollectionView from "./views/Collection.jsx";
 import CalendarView from "./views/Calendar.jsx";
 
 import { VIEW } from "./utils/Constants.js";
 
+import { useAuth } from "./hooks/useAuth.js";
 import { useTickets } from "./hooks/useTickets.js";
 import { useTicketFilters } from "./hooks/useTicketFilters.js";
 import { useTicketModals } from "./hooks/useTicketModals.js";
@@ -17,6 +19,9 @@ function App() {
   const [selectedView, setSelectedView] = useState(VIEW.COLLECTION);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(null);
+
+  const { session, authLoading, signIn, signInError, signingIn, signOut } =
+    useAuth();
 
   const {
     ticketList,
@@ -67,6 +72,16 @@ function App() {
     if (ok) closeTicketDetails();
   }
 
+  if (authLoading) {
+    return <div className="tixniverse-app min-h-screen w-full" />;
+  }
+
+  if (!session) {
+    return (
+      <LoginView onSignIn={signIn} error={signInError} loading={signingIn} />
+    );
+  }
+
   return (
     <div className="tixniverse-app min-h-screen w-full">
       {/* Navigation bar */}
@@ -74,6 +89,7 @@ function App() {
         view={selectedView}
         onViewChange={handleViewChange}
         onAddTicket={openAddTicket}
+        onSignOut={signOut}
       />
 
       {/* Collection */}
