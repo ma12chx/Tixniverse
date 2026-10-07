@@ -28,8 +28,8 @@ export const CATEGORY_OPTIONS = [
 ];
 
 export const STATUS = {
-  upcoming: { label: "upcoming", bgColor: "bg-sky-400" },
-  attended: { label: "attended", bgColor: "bg-green-600" },
+  upcoming: { label: "upcoming", bgColor: "bg-blue-500" },
+  attended: { label: "attended", bgColor: "bg-green-500" },
   missed: { label: "missed", bgColor: "bg-red-500" },
 };
 

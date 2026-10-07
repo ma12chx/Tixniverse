@@ -63,6 +63,7 @@ function NavBar({ view, onViewChange, onAddTicket, onSignOut }) {
           <button
             onClick={onSignOut}
             className="p-2 rounded-full cursor-pointer text-white"
+            title="Sign Out"
           >
             <LogOut size={20} />
           </button>
