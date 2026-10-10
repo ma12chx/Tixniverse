@@ -24,11 +24,15 @@ jobs:
       - name: 2. Setup Supabase CLI
         uses: supabase/setup-cli@v1
 
-      # 3. Link the project
+      # 3. Check DB Password
+      - name: 3. Check DB password os set
+        run: '[ -n "$SUPABASE_DB_PASSWORD" ] || (echo "SUPABASE_DB_PASSWORD is empty" && exit 1)'
+
+      # 4. Link the project
       - name: 3. Link Project
         run: supabase link --project-ref $PROJECT_ID
 
-      # 4. Push migrations
+      # 5. Push migrations
       - name: 4. Push Migrations
         run: supabase db push -p "$SUPABASE_DB_PASSWORD"
 
@@ -56,12 +60,18 @@ jobs:
       - name: 3. Install Dependencies
         run: npm install
 
-      # 4. Build the project
-      - name: 4. Build Project
+      # 4. Check Supabase env
+      - name: 4. Check Supabase env
+        run: |
+          [ -n "$VITE_SUPABASE_URL" ] || (echo "VITE_SUPABASE_URL is empty" && exit 1)
+          [ -n "$VITE_SUPABASE_ANON_KEY" ] || (echo "VITE_SUPABASE_ANON_KEY is empty" && exit 1)
+
+      # 5. Build the project
+      - name: 5. Build Project
         run: npm run build
 
-      # 5. Deploy to github pages
-      - name: 5. Deploy to Github
+      # 6. Deploy to github pages
+      - name: 6. Deploy to Github
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
