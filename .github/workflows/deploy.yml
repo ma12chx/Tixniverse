@@ -21,7 +21,7 @@ jobs:
 
       # 2. Setup Supabase
       - name: 2. Setup Supabase CLI
-        uses: actions/setup-cli@v1
+        uses: supabase/setup-cli@v1
 
       # 3. Link the project
       - name: 3. Link Project
