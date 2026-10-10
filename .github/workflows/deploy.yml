@@ -7,20 +7,49 @@ on:
       - main
 
 jobs:
-  build-deploy:
+  deploy-supabase:
     runs-on: ubuntu-latest
+
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      PROJECT_ID: exaoxclqlmqmpjynzdzf
+
     steps:
       # 1. Checkout the repository
       - name: 1. Checkout code
         uses: actions/checkout@v4
-        with:
-          node-version: 22
+
+      # 2. Setup Supabase
+      - name: 2. Setup Supabase CLI
+        uses: actions/setup-cli@v1
+
+      # 3. Link the project
+      - name: 3. Link Project
+        run: supabase link --project-ref $PROJECT_ID
+
+      # 4. Push migrations
+      - name: 4. Push Migrations
+        run: supabase db push
+
+  build-deploy:
+    runs-on: ubuntu-latest
+    needs: deploy-supabase
+
+    env:
+      VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+      VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+
+    steps:
+      # 1. Checkout the repository
+      - name: 1. Checkout code
+        uses: actions/checkout@v4
 
       # 2. Setup Node.js
       - name: 2. Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: npm
 
       # 3. Install Dependencies
       - name: 3. Install Dependencies
