@@ -1,9 +1,5 @@
 import { Galaxy, LayoutGrid, CalendarDays, Plus, LogOut } from "lucide-react";
-
-const VIEW = {
-  COLLECTION: "collection",
-  CALENDAR: "calendar",
-};
+import { VIEW } from "../utils/Constants";
 
 function NavBar({ view, onViewChange, onAddTicket, onSignOut }) {
   return (
