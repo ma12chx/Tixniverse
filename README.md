@@ -18,3 +18,6 @@ A personal web application for collecting and keeping track of event tickets (co
 | Icons / UI | lucide-react, SweetAlert2 |
 | Backend | Supabase (Postgres, Auth, Storage) |
 | CI/CD | GitHub Actions, GitHub Pages |
+
+# Demo
+https://ma12chx.github.io/Tixniverse/
