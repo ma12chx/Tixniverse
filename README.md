@@ -19,5 +19,5 @@ A personal web application for collecting and keeping track of event tickets (co
 | Backend | Supabase (Postgres, Auth, Storage) |
 | CI/CD | GitHub Actions, GitHub Pages |
 
-# Demo
+## Demo
 https://ma12chx.github.io/Tixniverse/
